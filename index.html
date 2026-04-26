@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Generator Soal Pembelajaran Mendalam & TKA SD</title>
+    <title>GEN-ALPA - Generator Asesmen SD</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Font: Quicksand -->
@@ -15,23 +15,39 @@
         body {
             font-family: 'Quicksand', sans-serif;
             background-color: #f8fafc;
+            /* Latar belakang global untuk seluruh halaman */
+            background-image: url('https://i.imgur.com/rQgDTWM.jpeg');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            min-height: 100vh;
+            scroll-behavior: smooth;
         }
+        
+        /* Lapisan overlay gelap agar teks di atas background tetap jelas terbaca */
+        .bg-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(30, 58, 138, 0.65); /* Biru navy semi-transparan */
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            z-index: -1;
+        }
+
         .font-edutech {
             font-family: 'Quicksand', sans-serif;
         }
+        
         /* Custom scrollbar */
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
         }
         ::-webkit-scrollbar-track {
             background: #f1f1f1;
         }
         ::-webkit-scrollbar-thumb {
-            background: #cbd5e1;
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
             background: #94a3b8;
+            border-radius: 10px;
         }
 
         @media print {
@@ -44,115 +60,476 @@
                 padding: 0 !important;
                 margin: 0 !important;
                 width: 100% !important;
+                display: block !important;
             }
             body {
+                background: none !important;
                 background-color: white !important;
+            }
+            .bg-overlay {
+                display: none !important;
             }
         }
 
         .glass-card {
-            background: rgba(255, 255, 255, 0.9);
+            background: rgba(255, 255, 255, 0.92);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
         .animate-fade-in {
-            animation: fadeIn 0.5s ease-out;
+            animation: fadeIn 0.4s ease-out forwards;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
+            from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Menghindari pemotongan teks pada select agar tampil utuh di HP */
+        select {
+            white-space: normal !important;
+            word-wrap: break-word !important;
+            height: auto !important;
+        }
+        select option {
+            white-space: normal;
+            padding: 8px;
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800">
+<body class="text-slate-800 antialiased relative flex flex-col min-h-screen">
+    
+    <!-- Overlay Background -->
+    <div class="bg-overlay"></div>
 
-    <div id="app">
-        <!-- Content will be rendered here via JavaScript -->
+    <div id="app" class="relative z-10 flex-grow w-full">
+        <!-- Konten akan dirender di sini via JS -->
+    </div>
+
+    <!-- Footer Ide Pengembang -->
+    <div class="text-center py-6 mt-auto text-white drop-shadow-md font-medium text-xs sm:text-sm no-print relative z-10 w-full">
+        Ide Pengembang oleh: <strong class="font-bold">Abdul Rahmat SDN 011 Balikpapan Tengah</strong>
     </div>
 
     <script>
-        // --- DATA & CONFIGURATION ---
+        // --- DATABASE TP LENGKAP (TIDAK ADA YANG DIKURANGI) ---
         const TP_DATA = {
             'Pendidikan Pancasila': {
-                'A': ['Mengenal bendera negara, lagu kebangsaan, lambang negara Garuda Pancasila, dan simbol Pancasila beserta sila-sila Pancasila.', 'Menerapkan nilai-nilai Pancasila di lingkungan keluarga.', 'Mengenal aturan di lingkungan keluarga.', 'Menunjukkan sikap serta mematuhi aturan di lingkungan keluarga.', 'Menceritakan contoh sikap mematuhi aturan di lingkungan keluarga.', 'Mengenal semboyan Bhinneka Tunggal Ika.', 'Mengidentifikasi dan menghargai identitas dirinya (jenis kelamin, hobi, bahasa).', 'Mengenal karakteristik lingkungan tempat tinggal sebagai bagian wilayah NKRI.', 'Menjaga lingkungan tempat tinggal dan sekolah.', 'Menceritakan perilaku kerja sama dalam keberagaman.', 'Mempraktikkan bekerja sama menjaga lingkungan sekitar.'],
-                'B': ['Menunjukkan sikap bangga menjadi anak Indonesia (Bahasa Indonesia sbg persatuan).', 'Mengenal lingkungan tempat tinggal (RT, RW, desa) sbg bagian NKRI.', 'Memahami, membuat, dan menerapkan aturan di sekolah dan lingkungan.', 'Mengidentifikasi hak dan kewajiban anggota keluarga dan warga sekolah.', 'Menunjukkan dan mengidentifikasi makna sila-sila Pancasila sehari-hari.', 'Mengidentifikasi dan menghargai identitas diri sesuai agama dan kepercayaan.', 'Mengidentifikasi dan meneladani karakter para perumus Pancasila.', 'Menghargai identitas teman (budaya, suku, agama) di lingkungan sekitar.', 'Mengenal lingkungan tempat tinggal hingga tingkat kecamatan.', 'Menerapkan makna sila-sila Pancasila dalam kehidupan sehari-hari.'],
-                'C': ['Menguraikan makna nilai-nilai Pancasila sebagai dasar negara dan pandangan hidup.', 'Menghubungkan sila-sila dalam Pancasila sebagai suatu kesatuan yang utuh.', 'Menerapkan bentuk-bentuk norma, hak, dan kewajiban sebagai warga negara.', 'Mengenal makna pembukaan UUD NRI Tahun 1945.', 'Mempraktikkan musyawarah untuk mufakat di keluarga dan sekolah.', 'Melestarikan keberagaman budaya sesuai semboyan Bhinneka Tunggal Ika.', 'Menggambarkan wilayah kabupaten/kota, provinsi dalam konteks NKRI.', 'Mempraktikkan perilaku gotong royong sebagai wujud bela negara.']
+                'A': [
+                    'Mengenal bendera negara, lagu kebangsaan, lambang negara Garuda Pancasila, dan simbol Pancasila beserta sila-sila Pancasila.',
+                    'Menerapkan nilai-nilai Pancasila di lingkungan keluarga.',
+                    'Mengenal aturan di lingkungan keluarga.',
+                    'Menunjukkan sikap serta mematuhi aturan di lingkungan keluarga.',
+                    'Menceritakan contoh sikap mematuhi aturan di lingkungan keluarga.',
+                    'Mengenal semboyan Bhinneka Tunggal Ika.',
+                    'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan jenis kelamin di lingkungan sekitar.',
+                    'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan hobi di lingkungan sekitar.',
+                    'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan bahasa di lingkungan sekitar.',
+                    'Mengenal karakteristik lingkungan tempat tinggal dan sekolah, sebagai bagian dari wilayah Negara Kesatuan Republik Indonesia.',
+                    'Menjaga lingkungan tempat tinggal dan sekolah.',
+                    'Menceritakan perilaku kerja sama dalam keberagaman di lingkungan tempat tinggal dan sekolah.',
+                    'Mempraktikkan bekerja sama menjaga lingkungan sekitar dalam keberagaman.'
+                ],
+                'B': [
+                    'Menunjukkan sikap bangga menjadi anak Indonesia yang memiliki bahasa Indonesia sebagai bahasa persatuan di lingkungan sekitar.',
+                    'Mengenal lingkungan tempat tinggal (RT, RW, dan desa/kelurahan) sebagai bagian tidak terpisahkan dari wilayah NKRI.',
+                    'Memahami, mengidentifikasi, membuat, dan menerapkan aturan di sekolah dan lingkungan tempat tinggal.',
+                    'Mengidentifikasi dan menerapkan hak yang didapat dan kewajiban sebagai anggota keluarga dan warga sekolah.',
+                    'Menunjukkan dan mengidentifikasi makna sila-sila Pancasila dalam kehidupan sehari-hari.',
+                    'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan agama dan kepercayaan di lingkungan sekitar.',
+                    'Mengidentifikasi dan meneladani karakter para perumus Pancasila.',
+                    'Membedakan dan menghargai identitas keluarga dan teman-temannya sesuai budaya, suku bangsa, bahasa, agama dan kepercayaan di lingkungan sekitar.',
+                    'Mengenal lingkungan tempat tinggal hingga tingkat kecamatan sebagai bagian wilayah NKRI.',
+                    'Menerapkan makna sila-sila Pancasila dalam kehidupan sehari-hari.'
+                ],
+                'C': [
+                    'Menguraikan makna nilai-nilai Pancasila sebagai dasar negara, dan pandangan hidup bangsa.',
+                    'Menghubungkan sila-sila dalam Pancasila sebagai suatu kesatuan yang utuh.',
+                    'Mengidentifikasi, menyajikan hasil identifikasi, dan menerapkan bentuk-bentuk norma, hak, dan kewajiban dalam kedudukannya sebagai warga negara.',
+                    'Mengenal makna pembukaan UUD NRI Tahun 1945.',
+                    'Mempraktikkan musyawarah untuk membuat kesepakatan dan aturan bersama dalam kehidupan sehari-hari di lingkungan keluarga dan sekolah.',
+                    'Mengidentifikasi dan menyajikan hasil identifikasi sikap menghormati, menjaga, dan melestarikan keberagaman budaya sesuai semboyan Bhinneka Tunggal Ika di lingkungan sekitar.',
+                    'Menggambarkan wilayahnya dalam konteks kabupaten/kota, provinsi sebagai bagian dari wilayah NKRI.',
+                    'Memahami makna dan mempraktikkan perilaku gotong royong untuk menjaga persatuan dan kesatuan di lingkungan sekolah dan sekitar sebagai wujud bela negara.'
+                ]
             },
             'Bahasa Indonesia': {
-                'A': ['Memahami informasi teks nonsastra aural (percakapan) tentang diri.', 'Membaca kata-kata sederhana tentang diri dan keluarga secara fasih.', 'Menulis permulaan dengan benar (kertas/digital).', 'Memahami informasi percakapan berkaitan dengan keluarga.', 'Merespons pertanyaan dan komentar orang lain dengan santun.', 'Memahami isi bacaan/tayangan tentang diri dan keluarga.', 'Menceritakan kembali isi teks yang dibaca/didengar tentang keluarga.', 'Mengembangkan tulisan tangan yang semakin baik.', 'Menulis teks sederhana tentang diri/keluarga (beberapa kalimat).', 'Memahami pesan teks sastra berbentuk teks aural.', 'Mengungkapkan perasaan dan gagasan secara lisan.', 'Memahami informasi nonsastra tentang lingkungan sekitar.', 'Membaca kata sederhana tentang kesehatan dan lingkungan.', 'Menceritakan kembali isi teks kesehatan dan lingkungan sekitar.'],
-                'B': ['Membaca kata-kata baru dari teks nonsastra secara fasih.', 'Mengidentifikasi ide pokok dari teks aural yang didengarkan.', 'Mengidentifikasi informasi dalam teks nonsastra yang dibaca/dipirsa.', 'Menceritakan kembali isi teks secara runtut dan jelas.', 'Menyampaikan pendapat sederhana secara lisan dengan santun.', 'Menyampaikan kembali informasi penting menggunakan kosakata sendiri.', 'Menggunakan volume dan intonasi suara yang sesuai situasi.', 'Menyusun kalimat sederhana dengan kaidah bahasa dan makna denotatif.', 'Menulis paragraf pendek dengan struktur kalimat beragam.', 'Membaca teks sastra dengan intonasi dan ekspresi sesuai.', 'Mengidentifikasi peristiwa utama dan unsur intrinsik teks sastra.', 'Menjelaskan ide pokok paragraf dan ide pendukung teks nonsastra.', 'Menyimpulkan isi teks nonsastra berdasarkan informasi.', 'Menulis berbagai tipe teks sederhana sesuai konteks.'],
-                'C': ['Membaca kata-kata dengan berbagai pola kombinasi huruf secara fasih.', 'Menganalisis informasi dari teks nonsastra aural (didengarkan).', 'Menganalisis informasi nonsastra visual dan audiovisual.', 'Menulis teks sederhana pengalaman dengan kalimat kompleks.', 'Menyampaikan perasaan berdasarkan fakta secara indah (teks sastra).', 'Menganalisis isi teks sastra aural dan visual.', 'Menulis berbagai tipe teks berdasarkan gagasan kreatif.', 'Menganalisis nilai-nilai dalam teks sastra visual/audiovisual.', 'Menulis teks berdasarkan hasil pengamatan dengan kaidah bahasa.', 'Mempresentasikan gagasan dengan efektif dan santun.', 'Menganalisis nilai-nilai dalam teks secara mendalam.']
+                'A': [
+                    'Memahami informasi dari teks nonsastra berbentuk teks aural berupa percakapan yang berkaitan dengan diri.',
+                    'Membaca kata-kata sederhana dengan fasih dari bacaan dan/atau tayangan yang dipirsa tentang diri dan/atau keluarga.',
+                    'Menulis permulaan dengan benar di atas kertas dan/atau melalui media digital.',
+                    'Memahami informasi dari teks nonsastra berbentuk teks aural berupa percakapan yang berkaitan dengan keluarga.',
+                    'Merespons dengan bertanya tentang sesuatu, menjawab, dan menanggapi komentar orang lain dengan baik dan santun dalam suatu percakapan tentang diri dan/atau keluarga.',
+                    'Memahami isi bacaan dan/atau tayangan yang dipirsa tentang diri dan/atau keluarga.',
+                    'Menceritakan kembali isi berbagai tipe teks yang dibaca, dipirsa, atau didengar tentang diri dan/atau keluarga.',
+                    'Mengembangkan tulisan tangan yang semakin baik.',
+                    'Menulis berbagai tipe teks sederhana tentang diri dan/atau keluarga dengan beberapa kalimat sederhana.',
+                    'Memahami pesan teks sastra berbentuk teks aural.',
+                    'Mengungkapkan perasaan dan gagasan secara lisan dengan atau tanpa bantuan gambar.',
+                    'Memahami informasi dari teks nonsastra berbentuk teks aural berupa percakapan yang berkaitan dengan lingkungan sekitar.',
+                    'Membaca kata-kata sederhana dengan fasih dari bacaan dan/atau tayangan yang dipirsa tentang kesehatan dan/atau lingkungan sekitar.',
+                    'Memahami isi bacaan dan/atau tayangan yang dipirsa tentang kesehatan dan/atau lingkungan sekitar.',
+                    'Merespons dengan bertanya tentang sesuatu, menjawab, dan menanggapi komentar orang lain dengan baik dan santun dalam suatu percakapan tentang kesehatan dan/atau lingkungan sekitar.',
+                    'Menceritakan kembali isi berbagai tipe teks yang dibaca, dipirsa, atau didengar kesehatan, dan/atau lingkungan sekitar.',
+                    'Menulis berbagai tipe teks sederhana tentang lingkungan sekitar dengan beberapa kalimat sederhana.'
+                ],
+                'B': [
+                    'Membaca kata-kata baru dari teks nonsastra yang dibaca/dipirsa secara fasih dan benar.',
+                    'Mengidentifikasi ide pokok dari teks aural nonsastra yang didengarkan.',
+                    'Mengidentifikasi informasi dalam teks nonsastra yang dibaca/dipirsa.',
+                    'Menceritakan kembali isi teks yang dibaca, dipirsa, atau didengar secara runtut dan jelas.',
+                    'Menyampaikan pendapat sederhana secara lisan menggunakan kata-kata yang santun.',
+                    'Menyampaikan kembali informasi penting dari teks menggunakan kosakata sendiri secara lisan.',
+                    'Menggunakan volume dan intonasi suara saat berbicara di depan teman sesuai situasi.',
+                    'Menyampaikan pendapat dengan sikap tubuh yang sesuai.',
+                    'Menyusun kalimat sederhana secara tepat menggunakan kaidah kebahasaan dan kosakata baru yang memiliki makna denotatif.',
+                    'Menulis paragraf pendek dengan struktur kalimat yang runtut dan beragam.',
+                    'Menggunakan kosakata baru dengan makna denotatif dalam tulisan sederhana.',
+                    'Membaca teks sastra dengan intonasi dan ekspresi yang sesuai. Menemukan isi dari teks sastra lisan.',
+                    'Mengidentifikasi peristiwa utama dalam teks sastra yang dibaca/dipirsa.',
+                    'Menjelaskan ide pokok dari paragraf dalam teks nonsastra yang dibaca/dipirsa.',
+                    'Mengidentifikasi unsur intrinsik dalam teks sastra yang dibaca/dipirsa.',
+                    'Menjelaskan pesan atau amanat yang disampaikan dalam teks sastra yang dibaca/dipirsa.',
+                    'Menyimpulkan pesan dari teks sastra lisan.',
+                    'Membedakan antara informasi utama dan rincian dari teks nonsastra yang dibacakan dan/atau didengarkan.',
+                    'Menentukan ide pendukung yang memperkuat ide pokok dalam teks nonsastra berbentuk cetak dan/atau elektronik.',
+                    'Menyimpulkan isi teks nonsastra berdasarkan informasi yang dibaca/dipirsa.',
+                    'Menanggapi pendapat teman dengan kalimat yang baik dan sesuai tata cara diskusi sederhana.',
+                    'Memberikan alasan sederhana terhadap pendapat yang disampaikan.',
+                    'Menyampaikan pendapat yang didukung oleh informasi dari teks yang telah dibaca atau didengar.',
+                    'Menulis berbagai tipe teks sederhana sesuai konteks menggunakan kaidah kebahasaan dan kosakata baru yang memiliki makna denotatif.'
+                ],
+                'C': [
+                    'Membaca kata-kata dengan berbagai pola kombinasi huruf dengan fasih dari bacaan dan/atau tayangan yang dipirsa.',
+                    'Menganalisis informasi dari teks nonsastra berbentuk teks aural (teks yang dibacakan dan/atau didengarkan).',
+                    'Menganalisis informasi nonsastra berwujud teks visual dan/atau audiovisual.',
+                    'Menulis berbagai tipe teks sederhana berdasarkan pengalaman dengan rangkaian kalimat kompleks secara menarik menggunakan kosakata baru yang memiliki makna denotatif.',
+                    'Menyampaikan perasaan berdasarkan fakta (diri sendiri) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.',
+                    'Menganalisis isi teks sastra berbentuk teks aural.',
+                    'Menganalisis informasi dalam teks sastra berwujud teks visual dan/atau audiovisual.',
+                    'Menyampaikan perasaan berdasarkan imajinasi (diri sendiri) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.',
+                    'Menulis berbagai tipe teks sederhana berdasarkan gagasan dengan rangkaian kalimat kompleks secara kreatif.',
+                    'Menganalisis nilai-nilai dalam teks sastra berwujud teks visual dan/atau audiovisual.',
+                    'Menyampaikan perasaan berdasarkan fakta (orang lain) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.',
+                    'Menulis berbagai tipe teks sederhana berdasarkan hasil pengamatan dengan rangkaian kalimat kompleks secara kreatif menggunakan kaidah kebahasaan.',
+                    'Menyampaikan perasaan berdasarkan imajinasi (orang lain) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.',
+                    'Mempresentasikan gagasan dari berbagai tipe teks dengan efektif dan santun.',
+                    'Menganalisis nilai-nilai dalam berbagai tipe teks secara mendalam (nonsastra dan sastra, aural dan audiovisual).',
+                    'Menulis berbagai tipe teks sederhana berdasarkan imajinasi dengan rangkaian kalimat kompleks secara indah menggunakan kosakata baru yang memiliki makna konotatif.'
+                ]
             },
             'Matematika': {
-                'A': ['Membilang benda, subitasi, menyatakan kumpulan benda (lebih banyak/sedikit).', 'Mengurutkan bilangan, komposisi & dekomposisi sampai 20, nilai tempat.', 'Membaca dan menulis bilangan sampai 20 (korespondensi satu-satu).', 'Penjumlahan dan pengurangan sampai 20 dengan alat bantu konkret.', 'Memecahkan soal cerita sederhana penjumlahan & pengurangan sampai 20.', 'Menulis kalimat matematika bilangan belum diketahui (sampai 20).', 'Menunjukkan konsep setengah dan seperempat.', 'Mengurutkan/mengelompokkan benda dengan pola tertentu.', 'Menjelaskan makna simbol "=" pada kalimat matematika.', 'Identifikasi bentuk bangun datar (segitiga, persegi, lingkaran).', 'Membandingkan panjang & berat secara langsung/tidak langsung.', 'Melakukan pengukuran panjang dengan satuan tidak baku.', 'Membaca dan menulis bilangan sampai 100.', 'Komposisi & dekomposisi bilangan sampai 100.', 'Menyatakan pecahan 1/2 dan 1/4 ke representasi gambar.', 'Identifikasi bangun ruang (kubus, balok, bola, kerucut).', 'Menjelaskan posisi objek (kanan, kiri, depan, belakang, atas, bawah).', 'Mengurutkan, menyortir, dan mengelompokkan data.'],
-                'B': ['Menunjukkan pemahaman intuisi bilangan sampai 10.000.', 'Membaca, menulis, membandingkan, mengurutkan bilangan cacah sampai 10.000.', 'Operasi penjumlahan dan pengurangan bilangan cacah sampai 1.000.', 'Mengisi nilai belum diketahui pada kalimat matematika (sampai 100).', 'Mengembangkan pola gambar/objek dan pola bilangan (sampai 100).', 'Operasi perkalian dan pembagian bilangan cacah sampai 100.', 'Menyelesaikan masalah berkaitan dengan kelipatan dan faktor.', 'Menyelesaikan masalah uang menggunakan ribuan sebagai satuan.', 'Mengenali pecahan senilai menggunakan gambar dan simbol.', 'Membandingkan dan mengurutkan pecahan.', 'Menunjukkan pemahaman bilangan desimal.', 'Menghubungkan pecahan desimal perseratusan dengan persen.', 'Menyusun dan mengurai (komposisi/dekomposisi) bangun datar.', 'Mengukur panjang, berat, luas, dan volume.', 'Menyajikan dan interpretasi data (tabel, piktogram, diagram batang).'],
-                'C': ['Membaca, menulis, membandingkan bilangan cacah sampai 1.000.000.', 'Menyelesaikan masalah sehari-hari terkait uang.', 'Operasi hitung campuran bilangan cacah sampai 100.000.', 'Menentukan KPK dan FPB dari 2 atau 3 bilangan.', 'Operasi penjumlahan dan pengurangan pecahan berbeda penyebut.', 'Operasi perkalian dan pembagian pecahan dengan bilangan asli.', 'Mengubah pecahan ke desimal dan persen.', 'Memahami sifat komutatif, asosiatif, distributif.', 'Memahami konsep rasio dan perbandingan.', 'Menyelesaikan masalah proporsi sehari-hari.', 'Menghitung keliling dan luas bangun datar gabungan.', 'Mengubah satuan waktu (detik s/d windu).', 'Memahami konsep sudut dan mengukur dengan busur.', 'Mengonstruksi dan mengurai bangun ruang.', 'Visualisasi spasial (tampak depan, atas, samping).', 'Analisis data (skala kemungkinan, kejadian acak).']
+                'A': [
+                    'Membilang benda, mengenali banyak benda dalam kumpulan tanpa membilang (subitasi), mengenali dan menyatakan kumpulan benda yang sama banyak, lebih banyak atau lebih sedikit.',
+                    'Mengurutkan bilangan maju dan mundur, komposisi dan dekomposisi bilangan sampai 20, dan menentukan nilai tempat sampai 20.',
+                    'Membaca dan menulis bilangan sampai 20 dengan korespondesi satu-satu.',
+                    'Menyelesaikan operasi penjumlahan sampai 20 dengan menggunakan berbagai strategi dan alat bantu benda konkret.',
+                    'Menyelesaikan operasi pengurangan sampai 20 dengan menggunakan berbagai strategi dan alat bantu benda konkret.',
+                    'Memecahkan soal cerita sederhana yang melibatkan penjumlahan dan pengurangan sampai 20.',
+                    'Menuliskan kalimat matematika dan menentukan bilangan yang belum diketahui dari soal cerita sederhana yang berkaitan dengan penjumlahan dan pengurangan dua bilangan sampai dengan 20.',
+                    'Menunjukkan setengah sebagai hasil pembagian sebuah benda atau kumpulan objek menjadi dua bagian sama besar atau sama banyak serta pembagian berulang akan menghasilkan seperempat.',
+                    'Mengurutkan dan mengelompokkan benda dengan pola tertentu serta menjelaskan polanya.',
+                    'Menjelaskan makna simbol "=" pada berbagai bentuk kalimat matematika pada operasi bilangan cacah sampai 20 dengan diagram atau gambar.',
+                    'Mengidentifikasi, mendeskripsikan, dan menyebutkan bentuk-bentuk bangun datar di lingkungan sekitar (segitiga, persegi, persegi panjang, lingkaran).',
+                    'Membandingkan panjang secara langsung dan tidak langsung ukuran benda-benda dalam dengan menggunakan bahasa sehari-hari.',
+                    'Melakukan pengukuran dan menentukan panjang benda dengan satuan tidak baku.',
+                    'Membandingkan berat secara langsung dan tidak langsung benda-benda dengan menggunakan bahasa sehari-hari.',
+                    'Membaca dan menulis bilangan sampai 100.',
+                    'Melakukan komposisi dan dekomposisi bilangan serta menentukan nilai tempat sampai 100.',
+                    'Menyelesaikan operasi penjumlahan sampai 20 dengan menggunakan simbol +, -, =.',
+                    'Menyelesaikan operasi pengurangan sampai 20 dengan menggunakan simbol +, -, =, serta kaitannya dengan bentuk penjumlahan.',
+                    'Menyelesaikan masalah rutin dan non-rutin yang melibatkan penjumlahan dan pengurangan sampai 20.',
+                    'Menyatakan pecahan setengah dan seperempat ke berbagai bentuk representasi gambar dan menuliskannya ke simbol 1/2 dan 1/4.',
+                    'Menggunakan konsep setengah dan seperempat dalam pemecahan masalah sehari-hari.',
+                    'Menyalin, melanjutkan, dan membuat pola dengan gambar, warna, suara atau jenis pola lainnya.',
+                    'Mendeskripsikan dan melanjutkan pola non-bilangan yang dibuat dengan menggunakan atribut (warna, bentuk, ukuran) pada benda.',
+                    'Mengidentifikasi, mendeskripsikan, dan mengelompokkan bangun datar berdasarkan ciri atau sifat tertentu.',
+                    'Menyusun (komposisi) dan menguraikan (dekomposisi) bentuk-bentuk bangun datar untuk membentuk bentuk-bentuk bangun datar lainnya.',
+                    'Mengidentifikasi, mendeskripsikan, dan menyebut bangun ruang di lingkungan sekitar (kubus, balok, kerucut, dan bola).',
+                    'Mengidentifikasi, mendeskripsikan, dan mengklasifikasikan benda benda bangun ruang berdasar ciri atau sifatnya (sisi, simpul, sudut).',
+                    'Menjelaskan posisi suatu objek terhadap objek lainnya (sebelah kanan, kiri, depan, belakang, atas, bawah).',
+                    'Membandingkan durasi waktu dari sebuah kejadian atau aktivitas.',
+                    'Menggunakan petunjuk arah, jarak atau langkah-langkah dari satu lokasi ke lokasi lain untuk mencapai lokasi tujuan secara efektif.',
+                    'Mengurutkan data dari banyak benda yang paling sedikit ke yang paling banyak.',
+                    'Menyortir dan mengelompokkan data dari benda-benda acak menjadi 4 kategori.'
+                ],
+                'B': [
+                    'Menunjukkan pemahaman dan intuisi bilangan (number sense) pada bilangan cacah sampai 10.000.',
+                    'Membaca, menulis, menentukan nilai tempat, membandingkan, mengurutkan, menggunakan nilai tempat, melakukan komposisi dan dekomposisi bilangan cacah sampai 10.000.',
+                    'Melakukan operasi penjumlahan dan pengurangan bilangan cacah sampai 1.000.',
+                    'Mengisi nilai yang belum diketahui dalam sebuah kalimat matematika yang berkaitan dengan penjumlahan dan pengurangan pada bilangan cacah sampai 100.',
+                    'Mengidentifikasi, meniru, dan mengembangkan pola gambar atau objek sederhana dan pola bilangan membesar dan mengecil yang melibatkan penjumlahan dan pengurangan pada bilangan cacah sampai 100.',
+                    'Melakukan operasi perkalian dan pembagian bilangan cacah sampai 100 menggunakan benda-benda konkret, gambar dan simbol matematika.',
+                    'Menyelesaikan masalah berkaitan dengan kelipatan dan faktor.',
+                    'Menyelesaikan masalah berkaitan dengan uang menggunakan ribuan sebagai satuan.',
+                    'Mengenali pecahan senilai menggunakan gambar dan simbol matematika.',
+                    'Membandingkan dan mengurutkan antar-pecahan dengan pembilang satu dan antar-pecahan dengan penyebut yang sama.',
+                    'Menunjukkan pemahaman dan intuisi bilangan (number sense) pada bilangan desimal.',
+                    'Menyatakan pecahan desimal persepuluhan dan perseratusan, serta menghubungkan pecahan desimal perseratusan dengan konsep persen.',
+                    'Mendeskripsikan ciri berbagai bentuk bangun datar (segiempat, segitiga, segi banyak).',
+                    'Menyusun (komposisi) dan menguraikan (dekomposisi) berbagai bangun datar (segiempat, segitiga, segi banyak).',
+                    'Mengukur panjang dan berat benda menggunakan satuan baku.',
+                    'Menentukan hubungan antar-satuan baku panjang (cm, m).',
+                    'Mengukur dan mengestimasi luas dan volume menggunakan satuan tidak baku dan satuan baku berupa bilangan cacah.',
+                    'Mengurutkan, membandingkan, dan menyajikan data dalam bentuk tabel, diagram gambar, piktogram, dan diagram batang (skala satu satuan).',
+                    'Menganalisis dan menginterpretasi data dalam bentuk tabel, diagram gambar, piktogram, dan diagram batang (skala satu satuan).'
+                ],
+                'C': [
+                    'Menunjukan kemampuan membaca, menulis, bilangan cacah sampai 1.000.000.',
+                    'Menentukan nilai tempat, membandingkan, mengurutkan, melakukan komposisi dan dekomposisi bilangan bilangan cacah sampai 1.000.000 menggunakan nilai tempat.',
+                    'Menyelesaikan masalah sehari-hari yang terkait dengan uang.',
+                    'Melakukan operasi penjumlahan, pengurangan, perkalian dan pembagian bilangan cacah 100.000 dengan prosedur yang benar.',
+                    'Menentukan kelipatan dan faktor dari suatu bilangan.',
+                    'Menentukan KPK dan FPB dari 2 dan 3 bilangan.',
+                    'Menyelesaikan permasalahan sehari-hari yang terkait dengan KPK dan FPB.',
+                    'Membandingkan, mengurutkan berbagai pecahan termasuk pecahan campuran.',
+                    'Melakukan operasi penjumlahan dan pengurangan pecahan termasuk pecahan yang berbeda penyebutnya.',
+                    'Melakukan operasi perkalian dan pembagian pecahan dengan bilangan asli dan sebaliknya.',
+                    'Mengubah pecahan menjadi berbagai bentuk pecahan (pecahan campuran, desimal, persen).',
+                    'Membandingkan, mengurutkan bilangan desimal.',
+                    'Memahami sifat-sifat bilangan dan operasi hitung (komutatif, asosiatif, distributif).',
+                    'Menentukan nilai yang belum diketahui dalam kalimat matematika yang melibatkan penjumlahan, pengurangan, perkalian, dan pembagian pada bilangan cacah 1000.',
+                    'Mengidentifikasi, meniru, dan mengembangkan pola bilangan membesar dan mengecil yang melibatkan perkalian dan pembagian.',
+                    'Menentukan bilangan selanjutnya atau sebelumnya dari pola bilangan tertentu yang melibatkan perkalian dan pembagian.',
+                    'Memahami konsep rasio dan menggunakan bahasa rasio untuk menjelaskan hubungan perbandingan antara dua besaran.',
+                    'Menentukan kesamaan rasio dengan menggunakan tabel rasio.',
+                    'Menentukan rasio satuan.',
+                    'Menentukan rasio bagian terhadap bagian dan rasio bagian terhadap keseluruhan.',
+                    'Menyelesaikan masalah sehari-hari dengan rasio.',
+                    'Menggunakan operasi perkalian dan pembagian dalam menyelesaikan masalah sehari-hari yang terkait dengan proporsi.',
+                    'Menentukan keliling dan luas berbagai bentuk bangun datar (segitiga, segiempat, dan segi banyak) serta gabungannya.',
+                    'Memahami konsep durasi waktu.',
+                    'Menjelaskan, membaca gerakan jarum jam.',
+                    'Mengubah satuan waktu (detik, menit, jam, hari, bulan, windu, dan lain-lain).',
+                    'Menyelesaikan masalah sehari-hari yang terkait dengan durasi waktu.',
+                    'Memahami konsep besar sudut.',
+                    'Mengidentifikasi, menunjukan, menggambar jenis-jenis sudut.',
+                    'Mengukur besar sudut menggunakan penggaris busur.',
+                    'Menentukan sudut yang belum diketahui pada bangun datar.',
+                    'Mengonstruksi dan mengurai bangun ruang (kubus, balok, dan gabungannya).',
+                    'Mengenali, menggambarkan visualisasi spasial (bagian depan, atas, dan samping).',
+                    'Membandingkan karakteristik antar bangun datar dan antar bangun bangun ruang.',
+                    'Menentukan lokasi pada peta menggunakan sistem berpetak.',
+                    'Mengurutkan, membandingkan, menyajikan, dan menganalisis data banyak benda dan data hasil pengukuran dalam bentuk gambar, piktogram, diagram batang, dan tabel frekuensi untuk mendapatkan informasi.',
+                    'Menentukan, menggambar skala kemungkinan (tidak mungkin, kurang mungkin, mungkin, sangat mungkin, pasti).',
+                    'Menentukan kejadian dengan kemungkinan yang lebih besar dalam suatu percobaan acak.'
+                ]
             },
             'IPAS': {
-                'B': ['Menjelaskan bentuk dan fungsi pancaindra.', 'Menganalisis siklus hidup makhluk hidup dan upaya pelestariannya.', 'Menjelaskan tugas, tanggung jawab, dan interaksi sosial.', 'Menjelaskan sumber dan proses perubahan energi.', 'Menganalisis sejarah masyarakat di lingkungan tempat tinggal.', 'Menjelaskan nilai mata uang dan cara mengelola keuangan bijak.', 'Mengenali letak kabupaten/provinsi menggunakan peta.', 'Menyimpulkan proses perubahan wujud zat.', 'Membedakan jenis gaya dan pengaruhnya terhadap gerak.', 'Solusi pelestarian SDA sebagai mitigasi perubahan iklim.'],
-                'C': ['Merefleksikan sistem organ tubuh manusia dan kesehatan organ.', 'Menganalisis hubungan komponen biotik-abiotik dalam ekosistem.', 'Menjelaskan fenomena gelombang bunyi dan cahaya.', 'Menjelaskan letak geografis Indonesia menggunakan peta.', 'Meninjau sejarah perjuangan pahlawan di sekitar.', 'Menemukan keragaman budaya nasional dan kearifan lokal.', 'Pemanfaatan energi alternatif sebagai mitigasi iklim.', 'Menerapkan kegiatan ekonomi masyarakat sekitar.', 'Menjelaskan tata surya, rotasi, dan revolusi bumi.']
+                'B': [
+                    'Menjelaskan bentuk dan fungsi pancaindra.',
+                    'Menganalisis siklus hidup makhluk hidup dan upaya pelestariannya.',
+                    'Menjelaskan peran, tugas, dan tanggung jawab serta interaksi sosial yang terjadi di sekitar tempat tinggal dan sekolah.',
+                    'Menjelaskan sumber dan bentuk energi, serta proses perubahan bentuk energi dalam kehidupan sehari-hari.',
+                    'Menganalisis sejarah masyarakat di lingkungan tempat tinggal.',
+                    'Menjelaskan nilai mata uang dan fungsinya, serta cara mengelola keuangan secara bijak.',
+                    'Mengenali letak kabupaten dan provinsi tempat tinggalnya dengan menggunakan peta konvensional/digital.',
+                    'Menyimpulkan proses perubahan wujud zat.',
+                    'Membedakan jenis gaya dan pengaruhnya terhadap arah, gerak, dan bentuk benda.',
+                    'Mengklasifikasikan ragam bentang alam dan keterkaitannya dengan profesi masyarakat, ragam budaya serta upaya untuk melestarikannya.',
+                    'Menghasilkan solusi untuk masalah yang berkaitan dengan pelestarian sumber daya alam sebagai upaya mitigasi perubahan iklim.'
+                ],
+                'C': [
+                    'Merefleksikan sistem organ tubuh manusia yang dikaitkan dengan cara menjaga kesehatan organ tubuhnya dalam kehidupan sehari-hari.',
+                    'Menganalisis hubungan antar komponen biotik dan abiotik, serta pengaruhnya terhadap ekosistem.',
+                    'Menjelaskan fenomena gelombang bunyi dan cahaya dalam kehidupan sehari-hari.',
+                    'Menjelaskan letak dan kondisi geografis negara Indonesia dengan menggunakan peta konvensional/digital.',
+                    'Meninjau sejarah perjuangan para pahlawan di lingkungan sekitar tempat tinggalnya.',
+                    'Menemukan keragaman budaya nasional dalam konteks kebhinekaan berdasarkan pemahaman terhadap nilai-nilai kearifan lokal yang berlaku di wilayah tempat tinggal.',
+                    'Menghasilkan upaya penghematan energi, serta pemanfaatan sumber energi alternatif dari sumber daya yang ada di sekitarnya sebagai upaya mitigasi perubahan iklim.',
+                    'Menerapkan kegiatan ekonomi masyarakat di lingkungan sekitar.',
+                    'Menjelaskan sistem tata surya, serta kaitannya dengan rotasi dan revolusi bumi.'
+                ]
             },
             'Bahasa Inggris': {
-                'B': ['Mengidentifikasi informasi teks lisan kehidupan sehari-hari.', 'Merespon teks lisan/multimodal sederhana.', 'Mengomunikasikan gagasan topik sehari-hari secara tertulis.'],
-                'C': ['Mengidentifikasi informasi tersurat/tersirat teks tertulis.', 'Mengungkapkan gagasan tertulis dengan kalimat majemuk.', 'Mengekspresikan perasaan dan pendapat tentang suatu isu.']
+                'B': [
+                    'Mengidentifikasi informasi pada teks lisan atau multimodal sederhana tentang kehidupan sehari-hari.',
+                    'Merespon teks lisan atau teks multimodal sederhana tentang kehidupan sehari-hari baik secara verbal maupun non verbal.',
+                    'Mengidentifikasi informasi dalam teks tulis atau teks multimodal sederhana tentang topik sehari-hari.',
+                    'Mengomunikasikan gagasan tentang topik sehari-hari dalam teks tulis pendek.',
+                    'Mengungkapkan gagasan secara lisan atau multimodal sederhana tentang kehidupan sehari-hari.',
+                    'Merespon informasi dalam teks tulis atau multimodal sederhana tentang topik sehari-hari secara verbal atau non verbal.',
+                    'Mengomunikasikan gagasan tentang topik sehari-hari dalam teks multimodal.'
+                ],
+                'C': [
+                    'Mengidentifikasi informasi tersurat dan tersirat dari berbagai jenis teks lisan tentang topik sehari-hari dan sesuai dengan minat.',
+                    'Merespon teks multimodal tentang topik sehari-hari dan sesuai dengan minat.',
+                    'Mengidentifikasi informasi tersurat dan tersirat dari berbagai jenis teks tertulis tentang topik sehari-hari dan sesuai dengan minat.',
+                    'Mengungkapkan gagasan dalam berbagai jenis teks secara tertulis tentang topik sehari-hari dan sesuai dengan minat dengan mulai menggunakan kalimat sederhana dan majemuk dengan struktur teks dan unsur kebahasaan yang tepat.',
+                    'Mengungkapkan gagasan dalam berbagai jenis teks secara lisan tentang topik yang dibahas menggunakan kalimat sederhana dan majemuk secara formal maupun informal.',
+                    'Mengidentifikasi alur informasi, informasi tersurat dan tersirat dari berbagai jenis teks tertulis atau teks multimodal tentang topik yang diminati.',
+                    'Merespon berbagai jenis teks tertulis tentang topik sehari-hari dan sesuai dengan minat.',
+                    'Mengungkapkan pengalaman dalam berbagai jenis teks secara tertulis tentang topik sehari-hari dan sesuai dengan minat.',
+                    'Mengungkapkan pendapat tentang suatu isu terkait kehidupan sehari-hari dan yang sesuai dengan minat.',
+                    'Mengungkapkan pengalaman dalam berbagai jenis teks secara lisan tentang topik yang dibahas.',
+                    'Merespon teks multimodal tentang topik sehari-hari dan sesuai dengan minat.',
+                    'Mengomunikasikan gagasan dan pengalaman dalam teks multimodal tentang topik sehari-hari dan sesuai dengan minat.',
+                    'Memertahankan pendapat tentang suatu isu terkait kehidupan sehari-hari dan yang sesuai dengan minat.'
+                ]
             },
             'Seni Musik': {
-                'A': ['Membedakan bunyi bernada dan tidak bernada.', 'Mengenal tempo lambat dan cepat.', 'Menyanyikan lagu anak dengan ritme benar.'],
-                'B': ['Menyanyikan lagu daerah dengan intonasi tepat.', 'Mengenal alat musik ritmis dan melodis.', 'Dinamika keras dan lembut dalam bernyanyi.'],
-                'C': ['Membaca notasi angka sederhana.', 'Bermain pianika/rekorder dalam ansambel.', 'Mengapresiasi musik tradisional Indonesia.']
+                'A': [
+                    'Membedakan bunyi bernada dan tidak bernada.',
+                    'Mengenal tempo lambat dan cepat dalam lagu.',
+                    'Menyanyikan lagu anak-anak dengan ritme yang benar.',
+                    'Mengeksplorasi sumber bunyi dari benda di sekitar.'
+                ],
+                'B': [
+                    'Menyanyikan lagu daerah dengan intonasi yang tepat.',
+                    'Mengenal alat musik ritmis dan melodis sederhana.',
+                    'Mempraktikkan dinamika keras dan lembut dalam bernyanyi.',
+                    'Mengenal dan mempraktikkan pola irama sederhana.'
+                ],
+                'C': [
+                    'Membaca notasi angka sederhana.',
+                    'Bermain alat musik pianika/rekorder dalam ansambel.',
+                    'Menggubah pola ritme sederhana.',
+                    'Mengapresiasi ragam musik tradisional Indonesia.'
+                ]
             },
             'Seni Rupa': {
-                'A': ['Elemen rupa (garis, bentuk, warna).', 'Membuat karya dari bentuk geometris dasar.', 'Mengeksplorasi warna primer dan sekunder.'],
-                'B': ['Karya 2D dengan komposisi warna.', 'Teknik cetak dan kolase.', 'Fokus dan kesatuan dalam karya rupa.'],
-                'C': ['Menggambar perspektif dan pencahayaan.', 'Mengapresiasi karya seni rupa lokal/Nusantara.', 'Menciptakan karya cermin identitas budaya.']
+                'A': [
+                    'Mengenal dan mengeksplorasi elemen rupa (garis, bentuk, warna).',
+                    'Membuat karya seni dari bentuk geometris dasar.',
+                    'Mengeksplorasi warna primer dan sekunder.',
+                    'Mengenal tekstur melalui teknik sederhana.'
+                ],
+                'B': [
+                    'Membuat karya seni dua dimensi dengan komposisi warna.',
+                    'Mengenal dan mempraktikkan teknik cetak dan kolase.',
+                    'Mengidentifikasi fokus dan kesatuan dalam karya rupa.',
+                    'Menggunakan gunting dan perekat secara aman dan tepat.'
+                ],
+                'C': [
+                    'Menggambar menggunakan perspektif dan pencahayaan.',
+                    'Mengapresiasi karya seni rupa lokal/Nusantara.',
+                    'Menciptakan karya rupa yang mencerminkan identitas budaya.',
+                    'Mempraktikkan teknik anyaman atau kriya tekstil sederhana.'
+                ]
             },
             'Seni Tari': {
-                'A': ['Menirukan gerak alam (hewan/tumbuhan).', 'Menari mengikuti ritme lagu.', 'Eksplorasi gerak tubuh berdasarkan tempo.'],
-                'B': ['Ruang, waktu, dan tenaga dalam gerak tari.', 'Mengenal properti tari tradisional.', 'Mempraktikkan gerak tari daerah sederhana.'],
-                'C': ['Menciptakan komposisi tari kelompok.', 'Apresiasi makna ragam gerak tari daerah.', 'Menerapkan tata rias dan busana tari.']
+                'A': [
+                    'Menirukan gerak alam (hewan/tumbuhan).',
+                    'Menari dengan mengikuti ritme lagu.',
+                    'Mengeksplorasi gerak tubuh berdasarkan tempo.',
+                    'Menampilkan gerak tari sederhana di depan teman.'
+                ],
+                'B': [
+                    'Memahami ruang, waktu, dan tenaga dalam gerak tari.',
+                    'Mengenal properti tari tradisional.',
+                    'Mempraktikkan gerak tari daerah sederhana.',
+                    'Menjelaskan fungsi tari di lingkungan sekitar.'
+                ],
+                'C': [
+                    'Menciptakan komposisi tari kelompok sederhana.',
+                    'Mengapresiasi makna ragam gerak tari daerah.',
+                    'Menerapkan tata rias dan busana tari sederhana.',
+                    'Mementaskan karya tari hasil kreasi kelompok.'
+                ]
             },
             'Seni Teater': {
-                'A': ['Ekspresi emosi melalui mimik wajah.', 'Bermain peran tokoh fabel.', 'Menirukan suara dan gerak benda.'],
-                'B': ['Olah vokal dan artikulasi jelas.', 'Mementaskan cerita rakyat pendek.', 'Identifikasi konflik sederhana dalam cerita.'],
-                'C': ['Menyusun naskah lakon sederhana.', 'Merancang tata panggung dan properti.', 'Analisis karakter tokoh pementasan.']
+                'A': [
+                    'Mengekspresikan emosi melalui mimik wajah.',
+                    'Bermain peran tokoh fabel (hewan).',
+                    'Menirukan suara dan gerak benda di sekitar.',
+                    'Berani tampil dalam permainan peran singkat.'
+                ],
+                'B': [
+                    'Melakukan olah vokal dan artikulasi yang jelas.',
+                    'Mementaskan cerita rakyat pendek secara berkelompok.',
+                    'Mengidentifikasi konflik sederhana dalam cerita.',
+                    'Menghargai penampilan teater teman sejawat.'
+                ],
+                'C': [
+                    'Menyusun naskah lakon sederhana.',
+                    'Merancang tata panggung dan properti untuk pertunjukan.',
+                    'Menganalisis karakter tokoh dalam pementasan.',
+                    'Melakukan improvisasi adegan berdasarkan situasi.'
+                ]
             },
             'Koding & AI': {
-                'C': ['Pemecahan masalah dengan langkah algoritmik.', 'Perbedaan cara manusia dan AI menyelesaikan masalah.', 'Produksi dan diseminasi konten digital.', 'Etika penggunaan AI sehari-hari.']
+                'C': [
+                    'Menerapkan pengelolaan data dengan memanipulasi, dan menganalisis data.',
+                    'Menerapkan pemecahan masalah dengan langkah-langkah algoritmik.',
+                    'Menuliskan instruksi yang lebih kompleks.',
+                    'Menerapkan produksi konten digital dalam bentuk audio dan video.',
+                    'Menerapkan diseminasi konten digital dalam bentuk audio dan video.',
+                    'Menerapkan kolaborasi dalam memproduksi dan mendiseminasi konten digital.',
+                    'Memahami perbedaan cara manusia dan Kecerdasan Artifisial dalam menyelesaikan masalah.',
+                    'Memahami manfaat dan dampak Kecerdasan Artifisial pada kehidupan masyarakat.',
+                    'Mengevaluasi kualitas data.',
+                    'Memahami perangkat Kecerdasan Artifisial pada platform tertentu.',
+                    'Menerapkan eksperimen yang memanfaatkan Kecerdasan Artifisial.',
+                    'Menerapkan pengumpulan dan pengolahan data melalui Kecerdasan Artifisial.',
+                    'Menerapkan proses identifikasi masalah menggunakan Kecerdasan Artifisial.',
+                    'Memahami pengaruh data input terhadap hasil klasifikasi Kecerdasan Artifisial.',
+                    'Menerapkan algoritma sederhana.',
+                    'Menerapkan representasi simbol dalam Instruksi.',
+                    'Melakukan eksperimen dengan instruksi logis.',
+                    'Menerapkan internet secara aman dan produktif.',
+                    'Memahami dampak teknologi digital.',
+                    'Menerapkan produksi konten digital dalam bentuk teks dan gambar.',
+                    'Menerapkan diseminasi konten digital dalam bentuk teks dan gambar.',
+                    'Memahami cara kerja Kecerdasan Artifisial secara sederhana.',
+                    'Memahami etika penggunaan Kecerdasan Artifisial dalam kehidupan sehari-hari.',
+                    'Menerapkan pemanfaatan Kecerdasan Artifisial untuk membuat karya.'
+                ]
             },
             'PJOK': {
-                'A': ['Gerak dasar lokomotor (jalan, lari, lompat).', 'Kebersihan diri dan lingkungan.', 'Permainan tradisional sederhana.'],
-                'B': ['Variasi gerak dasar atletik.', 'Konsep pola hidup sehat.', 'Senam lantai sederhana.'],
-                'C': ['Taktik dan strategi permainan beregu.', 'Perkembangan fisik masa pubertas.', 'Penyelamatan di air.']
+                'A': [
+                    'Mempraktikkan gerak dasar lokomotor (jalan, lari, lompat).',
+                    'Mengenal kebersihan diri dan lingkungan.',
+                    'Mempraktikkan permainan tradisional sederhana.'
+                ],
+                'B': [
+                    'Variasi dan kombinasi gerak dasar atletik.',
+                    'Memahami konsep pola hidup sehat.',
+                    'Mempraktikkan senam lantai sederhana.'
+                ],
+                'C': [
+                    'Menerapkan taktik dan strategi dalam permainan beregu.',
+                    'Memahami perkembangan fisik masa pubertas.',
+                    'Mempraktikkan penyelamatan di air.'
+                ]
             }
+        };
+
+        // --- MATRIKS TKA ---
+        const TKA_MATRIKS_TOPIK = {
+            'Matematika': [
+                'Pecahan senilai menggunakan gambar dan simbol matematika; Perbandingan dan pengurutan bilangan pecahan; Relasi berbagai bentuk pecahan (pecahan sederhana, desimal, persen).',
+                'Operasi penjumlahan, pengurangan, perkalian, dan pembagian bilangan cacah.',
+                'Operasi penjumlahan dan pengurangan bilangan pecahan, serta operasi perkalian dan pembagian bilangan pecahan dengan bilangan asli.',
+                'Kelipatan, faktor, KPK, dan FPB bilangan asli.',
+                'Bangun datar mencakup segitiga, segiempat, dan segi banyak.',
+                'Bangun ruang mencakup kubus, balok, dan gabungannya.',
+                'Bentuk bangun datar; Konstruksi bangun ruang dan visualisasi spasial (bagian depan, atas, dan samping).',
+                'Panjang benda menggunakan satuan baku; Hubungan antar-satuan baku panjang (mm, dm, cm, m, dam, hm, km).',
+                'Volume benda menggunakan satuan baku; Hubungan antar-satuan baku volume (ml, dl, cl, l, dal, hl, kl).',
+                'Berat benda menggunakan satuan baku; Hubungan antar-satuan baku berat (mg, dg, cg, g, dag, hg, kg).',
+                'Waktu; Hubungan antar-satuan waktu (detik, menit, jam, hari, pekan, bulan, tahun).',
+                'Laju perubahan (kecepatan).',
+                'Keliling dan luas bangun datar dan gabungannya.',
+                'Penentuan dan penaksiran rerata (mean), median, modus, dan jangkauan (range) dari data.',
+                'Peluang suatu kejadian majemuk sederhana.'
+            ],
+            'Bahasa Indonesia': [
+                'Pemahaman Tekstual: Mengidentifikasi penggunaan kosakata umum dan khusus dalam berbagai bidang.',
+                'Pemahaman Tekstual: Mengidentifikasi objek berdasarkan kosakata yang digunakan dalam teks fiksi atau nonfiksi.',
+                'Pemahaman Tekstual: Menyusun kembali informasi dari teks dalam bentuk ikhtisar/bagan.',
+                'Pemahaman Tekstual: Mengidentifikasi informasi tersurat dalam teks.',
+                'Pemahaman Inferensial: Menyimpulkan ide pokok, gagasan pendukung, amanat, tokoh, peristiwa, dan/atau nilai-nilai dalam teks.',
+                'Pemahaman Inferensial: Menyimpulkan perubahan sederhana pada objek, karakter, dan/atau latar dalam teks fiksi atau nonfiksi.',
+                'Pemahaman Inferensial: Menilai kesesuaian antarunsur dan/atau antarinformasi dalam teks.',
+                'Pemahaman Inferensial: Menyimpulkan respons emosional terhadap unsur teks fiksi.'
+            ]
         };
 
         const TKA_DOMAIN = {
             'Matematika': ['Bilangan', 'Aljabar', 'Geometri dan Pengukuran', 'Data dan Peluang'],
             'Bahasa Indonesia': ['Teks Fiksi (Sastra)', 'Teks Informasi (Fakta/Data)']
-        };
-
-        const TKA_MATRIKS_TOPIK = {
-            'Matematika': [
-                'Bilangan: Pecahan senilai, perbandingan, dan relasi desimal/persen',
-                'Bilangan: Operasi hitung bilangan cacah (Tambah, Kurang, Kali, Bagi)',
-                'Bilangan: Kelipatan, faktor, KPK, dan FPB',
-                'Geometri: Bangun datar (Segitiga, Segiempat, Segi banyak)',
-                'Geometri: Bangun ruang dan visualisasi spasial (Depan, Atas, Samping)',
-                'Pengukuran: Satuan baku panjang, berat, volume, dan waktu',
-                'Pengukuran: Laju perubahan (kecepatan), Keliling dan Luas',
-                'Data & Peluang: Interpretasi diagram, Mean, Median, Modus'
-            ],
-            'Bahasa Indonesia': [
-                'Pemahaman Tekstual: Mengidentifikasi kosakata dan informasi tersurat',
-                'Pemahaman Tekstual: Menyusun ikhtisar/bagan dari teks',
-                'Pemahaman Inferensial: Menyimpulkan ide pokok, amanat, dan nilai-nilai',
-                'Pemahaman Inferensial: Menyimpulkan perubahan objek atau karakter',
-                'Pemahaman Inferensial: Menilai kesesuaian antarunsur informasi',
-                'Pemahaman Inferensial: Menyimpulkan respons emosional tokoh'
-            ]
         };
 
         const TKA_KOGNITIF = {
@@ -162,9 +539,9 @@
 
         // --- STATE MANAGEMENT ---
         let state = {
-            view: 'home', // 'home' or 'generator'
+            view: 'home',
             identity: { nama: '', instansi: '' },
-            mode: 'Kurmer', // 'Kurmer' or 'TKA'
+            mode: 'Kurmer', 
             kelas: '4',
             mapel: 'Matematika',
             tujuanPembelajaran: '',
@@ -172,18 +549,38 @@
             materiEsensial: '',
             taksonomi: 'Bloom - Menganalisis (C4) / HOTS',
             jenisSoal: 'Pilihan Ganda',
-            // TKA Specifics
             mapelTKA: 'Matematika',
-            domainTKA: 'Bilangan',
             kognitifTKA: 'Pemahaman (Knowing)',
             topikTKA: '',
-            // Results
             loading: false,
             result: null,
             error: ''
         };
 
-        // --- CORE FUNCTIONS ---
+        // --- CORE LOGIC ---
+
+        function navigate(view) {
+            state.view = view;
+            window.scrollTo(0, 0);
+            render();
+        }
+
+        function setMode(mode) {
+            state.mode = mode;
+            state.result = null;
+            state.error = '';
+            if (mode === 'TKA') state.kelas = '5';
+            updateTPs();
+            render();
+        }
+
+        function updateTPs() {
+            const fase = getFase(state.kelas);
+            const list = TP_DATA[state.mapel]?.[fase] || [];
+            state.tujuanPembelajaran = list.length > 0 ? list[0] : 'Lainnya';
+            state.topikTKA = TKA_MATRIKS_TOPIK[state.mapelTKA][0];
+            state.kognitifTKA = TKA_KOGNITIF[state.mapelTKA][0];
+        }
 
         function getFase(kls) {
             const k = parseInt(kls);
@@ -192,12 +589,83 @@
             return 'C';
         }
 
+        window.handleIdentityInput = (field, value) => {
+            state.identity[field] = value;
+            const isFormValid = state.identity.nama.trim() !== '' && state.identity.instansi.trim() !== '';
+            const btn = document.getElementById('btn-start');
+            
+            if (btn) {
+                btn.disabled = !isFormValid;
+                if (isFormValid) {
+                    btn.className = "w-full sm:w-auto inline-flex items-center justify-center gap-3 font-bold py-3.5 px-8 rounded-full transition-all shadow-lg active:scale-95 text-sm sm:text-base lg:text-lg bg-blue-900 hover:bg-blue-800 text-white";
+                    const icon = btn.querySelector('[data-lucide="sparkles"]');
+                    if (icon) icon.classList.add('text-amber-400');
+                } else {
+                    btn.className = "w-full sm:w-auto inline-flex items-center justify-center gap-3 font-bold py-3.5 px-8 rounded-full transition-all shadow-lg active:scale-95 text-sm sm:text-base lg:text-lg bg-slate-300 text-slate-500 cursor-not-allowed";
+                    const icon = btn.querySelector('[data-lucide="sparkles"]');
+                    if (icon) icon.classList.remove('text-amber-400');
+                }
+            }
+        };
+
+        window.copyToClipboard = () => {
+            const res = state.result;
+            if(!res) return;
+
+            const indikatorText = res.indikator_soal_otomatis || res.indikator_soal || res.indikator || "Indikator tidak disertakan oleh AI.";
+            
+            let text = `INSTRUMEN EVALUASI MURID\n`;
+            text += `========================\n\n`;
+            text += `Mata Pelajaran: ${res.mapel}\n`;
+            text += `Kelas Asesmen: Kelas ${res.kelas} SD (${res.mode === 'Kurmer' ? 'Asesmen Reguler' : 'TKA'})\n`;
+            text += `Target Kompetensi/TP: ${res.topik}\n\n`;
+            text += `INDIKATOR SOAL:\n${indikatorText}\n\n`;
+            text += `--- STIMULUS ---\n${res.stimulus}\n\n`;
+            text += `--- PERTANYAAN ---\n${res.pertanyaan}\n\n`;
+            
+            if (res.opsi_jawaban && res.opsi_jawaban.length > 0) {
+                text += `--- OPSI JAWABAN ---\n`;
+                res.opsi_jawaban.forEach((o, i) => {
+                    let prefix = res.jenis_soal_terpilih.includes('Ganda') ? ['A','B','C','D'][i] : '-';
+                    text += `${prefix}. ${o}\n`;
+                });
+                text += `\n`;
+            }
+
+            text += `--- KUNCI JAWABAN ---\n${res.kunci_jawaban}\n\n`;
+            text += `--- ANALISIS PEDAGOGIS ---\n${res.pembahasan}\n`;
+
+            const textArea = document.createElement("textarea");
+            textArea.value = text;
+            textArea.style.top = "0";
+            textArea.style.left = "0";
+            textArea.style.position = "fixed";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                const successful = document.execCommand('copy');
+                if(successful) {
+                    alert('Teks soal berhasil disalin! Silakan paste (Ctrl+V) di Word atau Docs.');
+                } else {
+                    alert('Gagal menyalin teks soal.');
+                }
+            } catch (err) {
+                alert('Browser Anda tidak mendukung fitur salin otomatis.');
+            }
+            document.body.removeChild(textArea);
+        };
+
+        // Exponential backoff logic for robust API calls
         async function fetchWithRetry(url, options, maxRetries = 5) {
             const delays = [1000, 2000, 4000, 8000, 16000];
             for (let i = 0; i < maxRetries; i++) {
                 try {
                     const response = await fetch(url, options);
-                    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
                     return await response.json();
                 } catch (err) {
                     if (i === maxRetries - 1) throw err;
@@ -206,7 +674,9 @@
             }
         }
 
-        async function generateSoal() {
+        window.generateSoal = async (e) => {
+            if (e) e.preventDefault(); // Mencegah form reload halaman
+
             let finalTP = state.mode === 'Kurmer' ? (state.tujuanPembelajaran === 'Lainnya' ? state.customTP : state.tujuanPembelajaran) : "";
             if (state.mode === 'Kurmer' && !finalTP.trim()) {
                 alert("Silakan pilih atau isi Tujuan Pembelajaran.");
@@ -218,65 +688,138 @@
             state.error = '';
             render();
 
-            const apiKey = ""; // API Key placeholder
+            const apiKey = ""; // Disuntikkan lingkungan
             const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
+
+            let isHOTS = false;
+            let taksonomiTerpilih = state.mode === 'Kurmer' ? state.taksonomi : state.kognitifTKA;
+            
+            if (state.mode === 'Kurmer') {
+                if (state.taksonomi.includes('C4') || state.taksonomi.includes('C5') || state.taksonomi.includes('C6') || 
+                    state.taksonomi.includes('Relational') || state.taksonomi.includes('Extended Abstract')) {
+                    isHOTS = true;
+                }
+            } else {
+                if (state.kognitifTKA.includes('Penalaran') || state.kognitifTKA.includes('Mengevaluasi')) {
+                    isHOTS = true;
+                }
+            }
+
+            let pemahamanKognitif = "";
+            if (isHOTS) {
+                pemahamanKognitif = `
+                PRINSIP HOTS (Higher Order Thinking Skills) / PEMBELAJARAN MENDALAM:
+                1. HOTS BUKAN sekadar soal sulit secara teknis/berangka besar, melainkan menuntut proses kognitif tinggi (Penalaran/Level 3) dan transfer pengetahuan ke dalam konteks baru yang non-rutin.
+                2. Stimulus HARUS kontekstual (kehidupan nyata anak) agar murid dapat mentransfer hal yang dipelajari.
+                3. Sesuai Taksonomi Bloom: fokus pada C4 (Menganalisis), C5 (Mengevaluasi), C6 (Mengkreasi). Sesuai SOLO: Relational atau Extended Abstract.
+                4. Jawaban TIDAK BOLEH eksplisit ada di dalam teks, melainkan butuh analisis, logika, dan menghubungkan data.
+                `;
+            } else {
+                pemahamanKognitif = `
+                PRINSIP LOTS (Lower Order Thinking Skills):
+                1. Fokus pada kemampuan dasar: memanggil informasi dari memori (C1), menjelaskan konsep/informasi sederhana (C2), atau menerapkan konsep di konteks yang SUDAH DIKENAL/rutin (C3).
+                2. Untuk SOLO: targetkan Uni-structural (fokus pada 1 aspek data tunggal) atau Multi-structural (beberapa aspek tapi tidak menuntut murid menghubungkannya menjadi kesatuan kausalitas).
+                3. Jawaban BIASANYA sudah ada di dalam stimulus secara eksplisit, atau hanya memerlukan hafalan fakta / penerapan rumus langsung. 
+                4. PASTIKAN soal ini TETAP BERADA DI LEVEL LOTS, jangan dinaikkan menjadi analisis/HOTS. Jangan buat pertanyaan yang terlalu menjebak.
+                `;
+            }
+
+            let aturanPembuatan = `
+            ATURAN UMUM PEMBUATAN SOAL:
+            1. RUMUSAN INDIKATOR SOAL WAJIB DIBUAT dengan prinsip adanya stimulus dan KKO.
+               Format Wajib: "Disajikan [stimulus/permasalahan], murid dapat [KKO sesuai level ${taksonomiTerpilih}] [materi]".
+               Contoh: "Disajikan permasalahan sehari-hari yang berkaitan dengan keliling, murid dapat menentukan ukuran bangun datar."
+            2. Jika jenis soal "Pilihan Ganda Kompleks", buat TEPAT 4 PERNYATAAN pada opsi jawaban, dan ATUR HANYA 2 JAWABAN YANG BENAR pada kunci jawaban.
+            3. Jika jenis soal "Benar Salah beserta alasan", Anda WAJIB memberikan opsi_jawaban berupa pilihan alasan (bukan pernyataan benar/salah). Bentuk akhir di UI akan membiarkan murid memilih tombol Benar atau Salah, DITAMBAH memilih salah satu dari daftar opsi_jawaban ini sebagai alasannya.
+            `;
+
+            let aturanKhususKelas = "";
+            if (state.mode === 'Kurmer' && (state.kelas === '1' || state.kelas === '2')) {
+                aturanKhususKelas = `ATURAN KHUSUS KELAS 1 & 2 SD (FASE A):
+                - Gunakan bahasa yang SANGAT PENDEK dan sederhana agar anak tidak lelah membaca.
+                - Kontekstual: Angkat masalah nyata sehari-hari murid (keluarga, bermain, hewan peliharaan).
+                - ${isHOTS ? 'HOTS Fase A: Buat Pertanyaan Terbuka/Dilematis. Sering gunakan "Mengapa" atau berikan pilihan dilematis (Cth: Ibu alergi bulu tapi ada kucing kehujanan). Opsi jawaban (jika PG) HARUS berupa pilihan alasan rasional atau solusi, BUKAN angka/hafalan fakta.' : 'LOTS Fase A: Buat pertanyaan langsung. Tanyakan fakta atau informasi yang jelas terlihat dari stimulus cerita pendek tersebut.'}`;
+            } else if (state.mode === 'Kurmer') {
+                aturanKhususKelas = `WAJIB: Berikan STIMULUS (cerita, kasus nyata, data relevan) yang edukatif sesuai dengan tingkat kognitif murid kelas ${state.kelas}.`;
+            } else {
+                aturanKhususKelas = `WAJIB: Gunakan stimulus data/grafik/wacana kehidupan nyata yang valid sesuai standar TKA Pusmendik Kemendikdasmen.`;
+            }
 
             let prompt = "";
             if (state.mode === 'Kurmer') {
-                prompt = `Buat 1 soal instrumen evaluasi SD Kelas ${state.kelas}. Mapel: ${state.mapel}, TP: ${finalTP}, Materi: ${state.materiEsensial}, Taksonomi: ${state.taksonomi}, Jenis Soal: ${state.jenisSoal}. 
-                WAJIB: Berikan STIMULUS positif dan edukatif. Jika Fase A (Kls 1-2), gunakan kalimat sederhana dan fokus pada nalar logis keseharian anak.`;
+                prompt = `Buat 1 soal instrumen evaluasi SD Kelas ${state.kelas}. Mapel: ${state.mapel}, TP: ${finalTP}, Materi: ${state.materiEsensial}, Level Kognitif: ${state.taksonomi}, Jenis Soal: ${state.jenisSoal}. 
+                ${pemahamanKognitif}
+                ${aturanPembuatan}
+                ${aturanKhususKelas}`;
             } else {
-                prompt = `Buat 1 soal TKA SD Bidang ${state.mapelTKA} Kelas ${state.kelas}. Domain: ${state.domainTKA}, Level Kognitif: ${state.kognitifTKA}, Matriks Kompetensi: ${state.topikTKA}, Jenis Soal: ${state.jenisSoal}. 
-                WAJIB: Gunakan stimulus data/grafik/wacana valid sesuai standar Pusmendik Kemendikdasmen.`;
+                prompt = `Buat 1 soal TKA SD Bidang ${state.mapelTKA} Kelas ${state.kelas}. Kognitif: ${state.kognitifTKA}, Matriks Kompetensi: ${state.topikTKA}, Jenis Soal: ${state.jenisSoal}. 
+                ${pemahamanKognitif}
+                ${aturanPembuatan}
+                ${aturanKhususKelas}`;
             }
 
-            const payload = {
-                contents: [{ parts: [{ text: prompt }] }],
-                systemInstruction: { parts: [{ text: "Respon harus format JSON murni. Gunakan gaya bahasa Indonesia yang modern dan ramah murid SD. Tuntutan soal harus HOTS (Pembelajaran Mendalam)." }] },
-                generationConfig: {
-                    responseMimeType: "application/json",
-                    responseSchema: {
-                        type: "OBJECT",
-                        properties: {
-                            indikator_soal_otomatis: { type: "STRING" },
-                            stimulus: { type: "STRING" },
-                            pertanyaan: { type: "STRING" },
-                            opsi_jawaban: { type: "ARRAY", items: { type: "STRING" } },
-                            kunci_jawaban: { type: "STRING" },
-                            pembahasan: { type: "STRING" }
-                        },
-                        required: ["indikator_soal_otomatis", "stimulus", "pertanyaan", "opsi_jawaban", "kunci_jawaban", "pembahasan"]
-                    }
-                }
-            };
-
             try {
+                const payload = {
+                    contents: [{ parts: [{ text: prompt }] }],
+                    systemInstruction: { parts: [{ text: "Respon harus format JSON murni. WAJIB mengisi properti 'indikator_soal_otomatis'. Gunakan bahasa Indonesia yang modern dan ramah murid SD." }] },
+                    generationConfig: {
+                        responseMimeType: "application/json",
+                        responseSchema: {
+                            type: "OBJECT",
+                            properties: {
+                                indikator_soal_otomatis: { type: "STRING" },
+                                stimulus: { type: "STRING" },
+                                pertanyaan: { type: "STRING" },
+                                opsi_jawaban: { type: "ARRAY", items: { type: "STRING" } },
+                                kunci_jawaban: { type: "STRING" },
+                                pembahasan: { type: "STRING" }
+                            },
+                            required: ["indikator_soal_otomatis", "stimulus", "pertanyaan", "opsi_jawaban", "kunci_jawaban", "pembahasan"]
+                        }
+                    }
+                };
+
                 const data = await fetchWithRetry(endpoint, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
+                
                 const resText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+                
                 if (resText) {
+                    // Membersihkan format markdown yang terkadang dihasilkan AI (e.g., ```json ... ```)
+                    let cleanText = resText.replace(/```json/g, '').replace(/```/g, '').trim();
+                    
                     state.result = {
-                        ...JSON.parse(resText),
+                        ...JSON.parse(cleanText),
                         mode: state.mode,
                         mapel: state.mode === 'Kurmer' ? state.mapel : state.mapelTKA,
                         kelas: state.kelas,
                         author: state.identity,
                         topik: state.mode === 'Kurmer' ? finalTP : state.topikTKA,
-                        jenis_soal_terpilih: state.jenisSoal
+                        jenis_soal_terpilih: state.jenisSoal,
+                        level_kognitif_dipilih: taksonomiTerpilih
                     };
+                } else {
+                    throw new Error("Respon AI kosong.");
                 }
             } catch (err) {
-                state.error = 'Terjadi kesalahan koneksi AI. Silakan coba lagi.';
+                state.error = "Gagal meracik soal. Mungkin server sedang sibuk atau ada kendala koneksi. Silakan coba lagi.";
             } finally {
                 state.loading = false;
                 render();
+                setTimeout(() => {
+                    const el = document.getElementById('result-target');
+                    if(el && !state.error) {
+                        const y = el.getBoundingClientRect().top + window.pageYOffset - 20;
+                        window.scrollTo({top: y, behavior: 'smooth'});
+                    }
+                }, 300);
             }
         }
 
-        // --- RENDER VIEWS ---
+        // --- UI RENDERERS ---
 
         function render() {
             const app = document.getElementById('app');
@@ -285,86 +828,62 @@
             } else {
                 app.innerHTML = renderGenerator();
             }
-            // Initialize Lucide Icons
             lucide.createIcons();
         }
 
         function renderHome() {
             const isFormValid = state.identity.nama.trim() !== '' && state.identity.instansi.trim() !== '';
-            
             return `
-            <div class="min-h-screen py-12 px-4 sm:px-6 lg:px-8 flex items-center justify-center animate-fade-in relative overflow-hidden" 
-                 style="background-image: url('https://i.imgur.com/rQgDTWM.png'); background-size: cover; background-position: center; background-attachment: fixed;">
-                <div class="absolute inset-0 bg-blue-950/40"></div>
-                <div class="max-w-4xl mx-auto space-y-10 w-full relative z-10 font-edutech">
-                    <div class="text-center space-y-8 glass-card p-10 sm:p-14 rounded-[2.5rem] shadow-2xl">
-                        <div class="inline-flex items-center justify-center p-5 bg-blue-50 rounded-3xl mb-2 border border-blue-100 shadow-sm">
-                            <i data-lucide="brain" class="w-16 h-16 text-blue-900"></i>
+            <div class="py-8 px-4 flex items-center justify-center relative w-full flex-grow">
+                <div class="w-full max-w-4xl mx-auto relative z-10">
+                    <div class="text-center space-y-6 glass-card p-6 sm:p-14 rounded-[2rem] sm:rounded-[2.5rem] shadow-2xl mx-auto w-full">
+                        <div class="inline-flex items-center justify-center mb-2">
+                            <img src="https://i.imgur.com/4eydkJ3.png" alt="Logo" class="w-20 h-20 sm:w-28 sm:h-28 object-contain drop-shadow-md" />
                         </div>
-                        <div class="space-y-4">
-                            <h1 class="text-4xl md:text-5xl font-bold text-blue-950 tracking-tight leading-tight">
-                                Generator Soal <br class="hidden sm:block" />
-                                <span class="text-blue-900 font-extrabold">Pembelajaran Mendalam & TKA</span>
+                        <div class="space-y-3">
+                            <h1 class="text-2xl sm:text-5xl font-bold text-blue-950 tracking-tight leading-tight">
+                                GEN-ALPA <br class="hidden sm:block" />
+                                <span class="text-blue-900 font-extrabold text-xl sm:text-4xl">Generator Asesmen Cerdas</span>
                             </h1>
-                            <p class="text-slate-700 max-w-2xl mx-auto text-lg leading-relaxed font-semibold">
-                                Platform modern untuk menyusun instrumen HOTS berkualitas, selaras dengan Kurikulum Merdeka dan standar nasional TKA.
+                            <p class="text-slate-700 max-w-2xl mx-auto text-sm sm:text-lg leading-relaxed font-semibold">
+                                Platform penyusun instrumen evaluasi berkualitas untuk berbagai level kognitif (LOTS & HOTS) serta standar TKA.
                             </p>
                         </div>
-                        <div class="max-w-md mx-auto bg-white p-6 rounded-3xl border border-blue-100 shadow-inner space-y-4">
-                            <h3 class="text-blue-900 font-bold flex items-center justify-center gap-2 mb-2"><i data-lucide="user" class="w-5 h-5"></i> Profil Pengampu</h3>
-                            <div class="relative">
+                        <div class="max-w-md mx-auto bg-white/90 p-5 rounded-2xl border border-blue-100 shadow-inner space-y-3">
+                            <h3 class="text-blue-900 text-sm font-bold flex items-center justify-center gap-2"><i data-lucide="user" class="w-4 h-4"></i> Profil Pengampu</h3>
+                            <div class="relative group">
                                 <input type="text" id="input-nama" placeholder="Nama Lengkap Guru" value="${state.identity.nama}" 
-                                    oninput="state.identity.nama = this.value; renderHomeUpdate();"
-                                    class="w-full pl-11 pr-4 py-3 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-900 focus:bg-white transition-all outline-none font-bold text-slate-800" />
-                                <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                                    oninput="handleIdentityInput('nama', this.value)"
+                                    class="w-full pl-11 pr-4 py-3 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-blue-900 focus:bg-white transition-all outline-none font-bold text-slate-800 text-sm" />
+                                <i data-lucide="user" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-900 transition-colors"></i>
                             </div>
-                            <div class="relative">
+                            <div class="relative group">
                                 <input type="text" id="input-instansi" placeholder="Nama Sekolah / Instansi" value="${state.identity.instansi}" 
-                                    oninput="state.identity.instansi = this.value; renderHomeUpdate();"
-                                    class="w-full pl-11 pr-4 py-3 bg-slate-50 border-2 border-slate-100 rounded-2xl focus:border-blue-900 focus:bg-white transition-all outline-none font-bold text-slate-800" />
-                                <i data-lucide="school" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400"></i>
+                                    oninput="handleIdentityInput('instansi', this.value)"
+                                    class="w-full pl-11 pr-4 py-3 bg-slate-50 border-2 border-slate-100 rounded-xl focus:border-blue-900 focus:bg-white transition-all outline-none font-bold text-slate-800 text-sm" />
+                                <i data-lucide="school" class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-blue-900 transition-colors"></i>
                             </div>
                         </div>
                         <div class="pt-2">
                             <button id="btn-start" ${!isFormValid ? 'disabled' : ''} onclick="navigate('generator')" 
-                                class="inline-flex items-center gap-3 font-bold py-4 px-12 rounded-full transition-all shadow-lg active:scale-95 text-lg 
-                                ${isFormValid ? 'bg-blue-900 hover:bg-blue-800 text-white shadow-blue-900/30' : 'bg-slate-200 text-slate-400 cursor-not-allowed'}">
-                                <i data-lucide="sparkles" class="w-6 h-6 ${isFormValid ? 'text-amber-400' : ''}"></i> Ayo Buat Soal Sekarang <i data-lucide="arrow-right" class="w-6 h-6 ml-1"></i>
+                                class="w-full sm:w-auto inline-flex items-center justify-center gap-3 font-bold py-3.5 px-8 rounded-full transition-all shadow-lg active:scale-95 text-sm sm:text-lg 
+                                ${isFormValid ? 'bg-blue-900 hover:bg-blue-800 text-white shadow-blue-900/30' : 'bg-slate-300 text-slate-500 cursor-not-allowed'}">
+                                <i data-lucide="sparkles" class="w-5 h-5 ${isFormValid ? 'text-amber-400' : ''}"></i> Ayo Buat Soal <i data-lucide="arrow-right" class="w-5 h-5 ml-1"></i>
                             </button>
                         </div>
-                        <div class="flex flex-col sm:flex-row items-center justify-center gap-5 pt-8 border-t border-slate-200/50">
-                            <button onclick="toggleModal('panduan')" class="flex items-center justify-center gap-4 p-4 bg-white/70 backdrop-blur-md border border-white shadow-sm rounded-2xl hover:border-blue-300 hover:bg-white transition-all w-full sm:w-auto flex-1 max-w-[300px] group">
-                                <div class="p-2.5 bg-blue-50/80 rounded-xl shadow-sm border border-blue-100 group-hover:scale-110 transition-transform"><i data-lucide="file-text" class="w-5 h-5 text-blue-600"></i></div>
-                                <span class="font-bold text-slate-800 group-hover:text-blue-800">Panduan Penggunaan</span>
+                        <div class="flex flex-col sm:flex-row items-center justify-center gap-3 pt-6 border-t border-slate-200/50">
+                            <button onclick="toggleModal('panduan')" class="flex items-center justify-center gap-3 p-3 bg-white/80 rounded-xl hover:bg-white transition-all w-full sm:w-auto flex-1 text-sm font-bold text-slate-800 shadow-sm">
+                                <i data-lucide="file-text" class="w-4 h-4 text-blue-600"></i> Panduan
                             </button>
-                            <button onclick="toggleModal('rangkuman')" class="flex items-center justify-center gap-4 p-4 bg-white/70 backdrop-blur-md border border-white shadow-sm rounded-2xl hover:border-emerald-300 hover:bg-white transition-all w-full sm:w-auto flex-1 max-w-[300px] group">
-                                <div class="p-2.5 bg-emerald-50/80 rounded-xl shadow-sm border border-emerald-100 group-hover:scale-110 transition-transform"><i data-lucide="lightbulb" class="w-5 h-5 text-emerald-600"></i></div>
-                                <span class="font-bold text-slate-800 group-hover:text-emerald-800">Rangkuman HOTS & TKA</span>
+                            <button onclick="toggleModal('rangkuman')" class="flex items-center justify-center gap-3 p-3 bg-white/80 rounded-xl hover:bg-white transition-all w-full sm:w-auto flex-1 text-sm font-bold text-slate-800 shadow-sm">
+                                <i data-lucide="lightbulb" class="w-4 h-4 text-emerald-600"></i> Memahami LOTS & HOTS
                             </button>
                         </div>
                     </div>
                 </div>
-
-                <!-- Modals -->
                 <div id="modal-container" class="hidden"></div>
             </div>
             `;
-        }
-
-        function renderHomeUpdate() {
-            const isFormValid = state.identity.nama.trim() !== '' && state.identity.instansi.trim() !== '';
-            const btn = document.getElementById('btn-start');
-            if (isFormValid) {
-                btn.disabled = false;
-                btn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
-                btn.classList.add('bg-blue-900', 'hover:bg-blue-800', 'text-white', 'shadow-blue-900/30');
-                btn.querySelector('i').classList.add('text-amber-400');
-            } else {
-                btn.disabled = true;
-                btn.classList.add('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
-                btn.classList.remove('bg-blue-900', 'hover:bg-blue-800', 'text-white', 'shadow-blue-900/30');
-                btn.querySelector('i').classList.remove('text-amber-400');
-            }
         }
 
         function renderGenerator() {
@@ -373,57 +892,61 @@
             const tps = TP_DATA[state.mapel]?.[fase] || [];
             
             return `
-            <div class="min-h-screen bg-slate-50 py-10 px-4 sm:px-6 lg:px-8 font-edutech text-slate-800 animate-fade-in">
-                <div class="max-w-7xl mx-auto space-y-8">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-2 border-b border-slate-200 no-print">
-                        <div class="flex items-center gap-4">
-                            <div class="p-3 bg-white rounded-2xl shadow-sm border border-slate-200"><i data-lucide="brain" class="w-8 h-8 text-blue-900"></i></div>
+            <div class="py-6 sm:py-10 px-4 sm:px-6 lg:px-8 font-edutech text-slate-800 relative z-10 w-full flex-grow">
+                <div class="max-w-7xl mx-auto space-y-6 w-full">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-slate-200/50 no-print glass-card p-4 rounded-3xl">
+                        <div class="flex items-center gap-3">
+                            <div class="p-2 bg-white rounded-xl shadow-sm border border-slate-200 shrink-0">
+                                <img src="https://i.imgur.com/4eydkJ3.png" class="w-8 h-8 sm:w-10 sm:h-10 object-contain" alt="Logo"/>
+                            </div>
                             <div>
-                                <h1 class="text-2xl md:text-3xl font-extrabold text-blue-950 tracking-tight">Generator Pembelajaran Mendalam</h1>
-                                <p class="text-slate-500 font-medium">Asisten: ${state.identity.nama} | ${state.identity.instansi}</p>
+                                <h1 class="text-base sm:text-xl font-extrabold text-blue-950">GEN-ALPA</h1>
+                                <p class="text-[10px] sm:text-xs text-slate-600 font-bold uppercase tracking-wider">${state.identity.nama} | ${state.identity.instansi}</p>
                             </div>
                         </div>
-                        <button onclick="navigate('home')" class="inline-flex items-center gap-2 text-slate-500 hover:text-blue-900 font-bold px-4 py-2 bg-white rounded-xl border border-slate-200 shadow-sm transition-all"><i data-lucide="arrow-left" class="w-5 h-5"></i> Kembali</button>
+                        <button onclick="navigate('home')" class="w-full sm:w-auto inline-flex items-center justify-center gap-2 text-slate-600 font-bold px-4 py-2.5 bg-white/90 rounded-xl border border-slate-200 text-sm shadow-sm hover:bg-white hover:text-blue-900 transition-colors">
+                            <i data-lucide="arrow-left" class="w-4 h-4"></i> Beranda
+                        </button>
                     </div>
 
-                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
-                        <div class="lg:col-span-4 space-y-6 no-print">
-                            <div class="bg-white rounded-3xl shadow-sm border border-slate-200 p-8 relative overflow-hidden">
-                                <div class="absolute top-0 left-0 w-full h-1.5 bg-blue-900"></div>
-                                <div class="flex bg-slate-100 p-1.5 rounded-2xl mb-8 border border-slate-200">
-                                    <button onclick="setMode('Kurmer')" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all ${state.mode === 'Kurmer' ? 'bg-white text-blue-900 shadow-sm' : 'text-slate-500'}">Kurikulum Merdeka</button>
-                                    <button onclick="setMode('TKA')" class="flex-1 py-2.5 text-sm font-bold rounded-xl transition-all ${state.mode === 'TKA' ? 'bg-white text-blue-900 shadow-sm' : 'text-slate-500'}">Asesmen TKA</button>
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start w-full">
+                        <div class="lg:col-span-4 space-y-6 no-print w-full">
+                            <div class="glass-card rounded-3xl shadow-lg border border-slate-200 p-5 sm:p-8 relative overflow-hidden">
+                                <div class="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-blue-700 to-indigo-900"></div>
+                                <div class="flex bg-slate-100/80 p-1.5 rounded-xl mb-6 border border-slate-200/60 backdrop-blur-sm">
+                                    <button type="button" onclick="setMode('Kurmer')" class="flex-1 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all ${state.mode === 'Kurmer' ? 'bg-white text-blue-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">Asesmen Reguler</button>
+                                    <button type="button" onclick="setMode('TKA')" class="flex-1 py-2 text-xs sm:text-sm font-bold rounded-lg transition-all ${state.mode === 'TKA' ? 'bg-white text-blue-900 shadow-sm' : 'text-slate-500 hover:text-slate-700'}">Asesmen TKA</button>
                                 </div>
 
-                                <form onsubmit="event.preventDefault(); generateSoal();" class="space-y-6">
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <div><label class="text-xs font-bold text-slate-500 uppercase mb-2 block tracking-wider">Kelas</label>
-                                            <select onchange="state.kelas = this.value; updateTPs();" class="w-full rounded-2xl border-slate-200 border-2 p-3 bg-slate-50 font-bold text-slate-800">
+                                <form onsubmit="generateSoal(event);" class="space-y-4">
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <div><label class="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Kelas</label>
+                                            <select onchange="state.kelas = this.value; updateTPs(); render();" class="w-full rounded-xl border-slate-200 border-2 p-2.5 bg-white/90 font-bold text-sm text-slate-800 focus:border-blue-500 outline-none">
                                                 ${state.mode === 'Kurmer' ? [1,2,3,4,5,6].map(k => `<option value="${k}" ${state.kelas == k ? 'selected' : ''}>Kelas ${k}</option>`).join('') : [5,6].map(k => `<option value="${k}" ${state.kelas == k ? 'selected' : ''}>Kelas ${k}</option>`).join('')}
                                             </select>
                                         </div>
-                                        <div><label class="text-xs font-bold text-slate-500 uppercase mb-2 block tracking-wider">Jenis Soal</label>
-                                            <select onchange="state.jenisSoal = this.value;" class="w-full rounded-2xl border-slate-200 border-2 p-3 bg-slate-50 font-bold text-slate-800">
-                                                <option value="Pilihan Ganda">Pilihan Ganda</option>
-                                                <option value="Pilihan Ganda Kompleks">PG Kompleks</option>
-                                                <option value="Benar Salah beserta alasan">Benar/Salah</option>
-                                                <option value="Isian">Isian</option>
-                                                <option value="Uraian">Uraian</option>
+                                        <div><label class="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Jenis Soal</label>
+                                            <select onchange="state.jenisSoal = this.value;" class="w-full rounded-xl border-slate-200 border-2 p-2.5 bg-white/90 font-bold text-sm text-slate-800 focus:border-blue-500 outline-none">
+                                                <option value="Pilihan Ganda" ${state.jenisSoal === 'Pilihan Ganda' ? 'selected' : ''}>Pilihan Ganda</option>
+                                                <option value="Pilihan Ganda Kompleks" ${state.jenisSoal === 'Pilihan Ganda Kompleks' ? 'selected' : ''}>PG Kompleks</option>
+                                                <option value="Benar Salah beserta alasan" ${state.jenisSoal === 'Benar Salah beserta alasan' ? 'selected' : ''}>Benar/Salah</option>
+                                                <option value="Isian" ${state.jenisSoal === 'Isian' ? 'selected' : ''}>Isian</option>
+                                                <option value="Uraian" ${state.jenisSoal === 'Uraian' ? 'selected' : ''}>Uraian</option>
                                             </select>
                                         </div>
                                     </div>
 
                                     ${state.mode === 'Kurmer' ? renderKurmerForm(subjects, tps) : renderTKAForm()}
 
-                                    <button id="btn-generate" ${state.loading ? 'disabled' : ''} type="submit" class="w-full mt-4 bg-blue-900 hover:bg-blue-950 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 transition-all active:scale-95 text-lg shadow-xl shadow-blue-900/20">
-                                        ${state.loading ? '<i data-lucide="loader-2" class="w-6 h-6 animate-spin"></i> Meracik...' : '<i data-lucide="sparkles" class="w-6 h-6 text-amber-400"></i> Buat Instrumen Soal'}
+                                    <button ${state.loading ? 'disabled' : ''} type="submit" class="w-full mt-2 bg-blue-900 hover:bg-blue-800 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-3 transition-all active:scale-95 text-sm sm:text-base shadow-lg disabled:bg-blue-400">
+                                        ${state.loading ? '<i data-lucide="loader-2" class="w-5 h-5 animate-spin"></i> Meracik Instrumen...' : '<i data-lucide="sparkles" class="w-5 h-5 text-amber-400"></i> Buat Instrumen Soal'}
                                     </button>
                                 </form>
                             </div>
                         </div>
 
-                        <div class="lg:col-span-8 flex flex-col h-full print-area">
-                            ${state.result ? renderResult() : renderEmptyState()}
+                        <div id="result-target" class="lg:col-span-8 flex flex-col h-full print-area w-full">
+                            ${state.error ? renderErrorState() : (state.result ? renderResult() : renderEmptyState())}
                         </div>
                     </div>
                 </div>
@@ -433,39 +956,41 @@
 
         function renderKurmerForm(subjects, tps) {
             return `
-            <div><label class="text-xs font-bold text-slate-500 uppercase mb-2 block tracking-wider">Mata Pelajaran</label>
-                <select onchange="state.mapel = this.value; updateTPs();" class="w-full rounded-2xl border-slate-200 border-2 p-3 bg-slate-50 font-bold text-slate-800">
+            <div><label class="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Mata Pelajaran</label>
+                <select onchange="state.mapel = this.value; updateTPs(); render();" class="w-full rounded-xl border-slate-200 border-2 p-2.5 bg-white/90 font-bold text-sm text-slate-800 focus:border-blue-500 outline-none">
                     ${subjects.map(s => `<option value="${s}" ${state.mapel === s ? 'selected' : ''}>${s}</option>`).join('')}
                 </select>
             </div>
-            <div class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 space-y-4 shadow-inner">
-                <div><label class="text-xs font-bold text-blue-900 uppercase mb-2 block">Tujuan Pembelajaran (TP)</label>
-                    <select onchange="state.tujuanPembelajaran = this.value; render();" class="w-full rounded-2xl border p-3 bg-white text-sm shadow-sm">
-                        ${tps.map(tp => `<option value="${tp}" ${state.tujuanPembelajaran === tp ? 'selected' : ''}>${tp.length > 50 ? tp.substring(0, 50) + '...' : tp}</option>`).join('')}
+            <div class="p-4 bg-white/60 rounded-xl border border-slate-200 space-y-4 shadow-inner">
+                <div><label class="text-[10px] font-bold text-blue-900 uppercase mb-1.5 block"><i data-lucide="target" class="w-3 h-3 inline pb-0.5"></i> Tujuan Pembelajaran (TP)</label>
+                    <select onchange="state.tujuanPembelajaran = this.value; render();" class="w-full rounded-xl border-2 border-slate-200 p-2.5 bg-white text-xs text-slate-700 shadow-sm h-auto focus:border-blue-500 outline-none">
+                        ${tps.map(tp => `<option value="${tp}" ${state.tujuanPembelajaran === tp ? 'selected' : ''}>${tp}</option>`).join('')}
                         <option value="Lainnya" ${state.tujuanPembelajaran === 'Lainnya' ? 'selected' : ''}>++ Ketik Manual ++</option>
                     </select>
-                    ${state.tujuanPembelajaran === 'Lainnya' ? `<textarea oninput="state.customTP = this.value" placeholder="Isi TP manual secara spesifik..." class="w-full mt-2 rounded-2xl border-blue-300 border-2 p-3 text-sm focus:ring-0">${state.customTP}</textarea>` : ''}
+                    ${state.tujuanPembelajaran === 'Lainnya' ? `<textarea oninput="state.customTP = this.value" placeholder="Isi TP manual..." class="w-full mt-2 rounded-xl border-blue-300 border-2 p-3 text-xs focus:ring-0 outline-none">${state.customTP}</textarea>` : ''}
                 </div>
-                <div><label class="text-xs font-bold text-amber-600 uppercase mb-2 block">Materi Esensial (Opsional)</label>
-                    <input oninput="state.materiEsensial = this.value" placeholder="Cth: Ekosistem Laut" class="w-full rounded-2xl border p-3 bg-white text-sm" value="${state.materiEsensial}" />
+                <div><label class="text-[10px] font-bold text-amber-600 uppercase mb-1.5 block"><i data-lucide="bookmark" class="w-3 h-3 inline pb-0.5"></i> Materi Esensial (Opsional)</label>
+                    <input oninput="state.materiEsensial = this.value" placeholder="Cth: Ekosistem Laut" class="w-full rounded-xl border-2 border-slate-200 p-2.5 bg-white text-xs text-slate-700 focus:border-amber-400 outline-none" value="${state.materiEsensial}" />
                 </div>
             </div>
-            <div><label class="text-xs font-bold text-slate-500 uppercase mb-2 block tracking-wider">Taksonomi</label>
-                <select onchange="state.taksonomi = this.value" class="w-full rounded-2xl border-slate-200 border-2 p-3 bg-slate-50 font-bold text-slate-800">
-                    <optgroup label="Bloom">
-                        <option value="Bloom - Mengingat (C1)">C1 - Mengingat</option>
-                        <option value="Bloom - Memahami (C2)">C2 - Memahami</option>
-                        <option value="Bloom - Menerapkan (C3)">C3 - Menerapkan</option>
-                        <option value="Bloom - Menganalisis (C4) / HOTS" selected>C4 - Menganalisis</option>
-                        <option value="Bloom - Mengevaluasi (C5) / HOTS">C5 - Mengevaluasi</option>
-                        <option value="Bloom - Mengkreasi (C6) / HOTS">C6 - Mengkreasi</option>
+            <div><label class="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Taksonomi Kognitif</label>
+                <select onchange="state.taksonomi = this.value" class="w-full rounded-xl border-slate-200 border-2 p-2.5 bg-white/90 font-bold text-xs text-slate-800 focus:border-blue-500 outline-none">
+                    <optgroup label="Bloom - Dasar (LOTS)">
+                        <option value="Bloom - Mengingat (C1)" ${state.taksonomi === 'Bloom - Mengingat (C1)' ? 'selected' : ''}>C1 - Mengingat (LOTS)</option>
+                        <option value="Bloom - Memahami (C2)" ${state.taksonomi === 'Bloom - Memahami (C2)' ? 'selected' : ''}>C2 - Memahami (LOTS)</option>
+                        <option value="Bloom - Menerapkan (C3)" ${state.taksonomi === 'Bloom - Menerapkan (C3)' ? 'selected' : ''}>C3 - Menerapkan (LOTS)</option>
+                    </optgroup>
+                    <optgroup label="Bloom - Lanjut (HOTS)">
+                        <option value="Bloom - Menganalisis (C4) / HOTS" ${state.taksonomi === 'Bloom - Menganalisis (C4) / HOTS' ? 'selected' : ''}>C4 - Menganalisis (HOTS)</option>
+                        <option value="Bloom - Mengevaluasi (C5) / HOTS" ${state.taksonomi === 'Bloom - Mengevaluasi (C5) / HOTS' ? 'selected' : ''}>C5 - Mengevaluasi (HOTS)</option>
+                        <option value="Bloom - Mengkreasi (C6) / HOTS" ${state.taksonomi === 'Bloom - Mengkreasi (C6) / HOTS' ? 'selected' : ''}>C6 - Mengkreasi (HOTS)</option>
                     </optgroup>
                     <optgroup label="SOLO">
-                        <option value="SOLO - Pre-structural">Pre-structural</option>
-                        <option value="SOLO - Uni-structural">Uni-structural</option>
-                        <option value="SOLO - Multi-structural">Multi-structural</option>
-                        <option value="SOLO - Relational">Relational</option>
-                        <option value="SOLO - Extended Abstract">Extended Abstract</option>
+                        <option value="SOLO - Pre-structural" ${state.taksonomi === 'SOLO - Pre-structural' ? 'selected' : ''}>Pre-structural (LOTS)</option>
+                        <option value="SOLO - Uni-structural" ${state.taksonomi === 'SOLO - Uni-structural' ? 'selected' : ''}>Uni-structural (LOTS)</option>
+                        <option value="SOLO - Multi-structural" ${state.taksonomi === 'SOLO - Multi-structural' ? 'selected' : ''}>Multi-structural (LOTS)</option>
+                        <option value="SOLO - Relational" ${state.taksonomi === 'SOLO - Relational' ? 'selected' : ''}>Relational (HOTS)</option>
+                        <option value="SOLO - Extended Abstract" ${state.taksonomi === 'SOLO - Extended Abstract' ? 'selected' : ''}>Extended Abstract (HOTS)</option>
                     </optgroup>
                 </select>
             </div>
@@ -474,20 +999,20 @@
 
         function renderTKAForm() {
             return `
-            <div><label class="text-xs font-bold text-slate-500 uppercase mb-2 block tracking-wider">Bidang TKA</label>
-                <select onchange="state.mapelTKA = this.value; render();" class="w-full rounded-2xl border-indigo-200 border-2 p-3 bg-indigo-50 font-bold text-indigo-950">
+            <div><label class="text-[10px] font-bold text-slate-500 uppercase mb-1 block">Bidang TKA</label>
+                <select onchange="state.mapelTKA = this.value; render();" class="w-full rounded-xl border-indigo-200 border-2 p-2.5 bg-indigo-50 font-bold text-sm text-indigo-950 focus:border-indigo-500 outline-none">
                     <option value="Matematika" ${state.mapelTKA === 'Matematika' ? 'selected' : ''}>Matematika</option>
                     <option value="Bahasa Indonesia" ${state.mapelTKA === 'Bahasa Indonesia' ? 'selected' : ''}>Bahasa Indonesia</option>
                 </select>
             </div>
-            <div class="p-5 bg-slate-50 rounded-2xl border-2 border-slate-100 space-y-4 shadow-inner">
-                <div><label class="text-xs font-bold text-slate-600 block mb-2">Matriks Kompetensi</label>
-                    <select onchange="state.topikTKA = this.value" class="w-full rounded-2xl border p-3 text-sm bg-white shadow-sm">
-                        ${TKA_MATRIKS_TOPIK[state.mapelTKA].map(t => `<option value="${t}" ${state.topikTKA === t ? 'selected' : ''}>${t.length > 50 ? t.substring(0, 50) + '...' : t}</option>`).join('')}
+            <div class="p-4 bg-white/60 rounded-xl border border-slate-200 space-y-4 shadow-inner">
+                <div><label class="text-[10px] font-bold text-slate-600 block mb-1.5"><i data-lucide="layers" class="w-3 h-3 inline pb-0.5"></i> Matriks Kompetensi</label>
+                    <select onchange="state.topikTKA = this.value" class="w-full rounded-xl border-2 border-slate-200 p-2.5 bg-white text-xs text-slate-700 shadow-sm h-auto focus:border-blue-500 outline-none">
+                        ${TKA_MATRIKS_TOPIK[state.mapelTKA].map(t => `<option value="${t}" ${state.topikTKA === t ? 'selected' : ''}>${t}</option>`).join('')}
                     </select>
                 </div>
-                <div><label class="text-xs font-bold text-slate-600 block mb-2">Level Kognitif</label>
-                    <select onchange="state.kognitifTKA = this.value" class="w-full rounded-2xl border p-3 text-sm bg-white shadow-sm">
+                <div><label class="text-[10px] font-bold text-slate-600 block mb-1.5"><i data-lucide="brain" class="w-3 h-3 inline pb-0.5"></i> Level Kognitif</label>
+                    <select onchange="state.kognitifTKA = this.value" class="w-full rounded-xl border-2 border-slate-200 p-2.5 bg-white text-xs text-slate-700 shadow-sm focus:border-blue-500 outline-none">
                         ${TKA_KOGNITIF[state.mapelTKA].map(k => `<option value="${k}" ${state.kognitifTKA === k ? 'selected' : ''}>${k}</option>`).join('')}
                     </select>
                 </div>
@@ -497,61 +1022,135 @@
 
         function renderResult() {
             const res = state.result;
+            // Menjamin indikator teks tampil dari properti apapun yang dikembalikan AI
+            const indikatorText = res.indikator_soal_otomatis || res.indikator_soal || res.indikator || "Indikator tidak disertakan oleh AI.";
+            
+            // Logika untuk menampilkan LOTS/HOTS label
+            let levelLabel = "";
+            let levelColor = "";
+            const t = res.level_kognitif_dipilih || "";
+            if(t.includes('C4') || t.includes('C5') || t.includes('C6') || t.includes('Relational') || t.includes('Extended Abstract') || t.includes('Penalaran') || t.includes('Mengevaluasi')) {
+                levelLabel = "HOTS (High Order)";
+                levelColor = "text-amber-700 bg-amber-100 border-amber-300";
+            } else {
+                levelLabel = "LOTS (Low Order)";
+                levelColor = "text-emerald-800 bg-emerald-100 border-emerald-300";
+            }
+
+            // Render opsi jawaban secara kondisional berdasarkan jenis soal
+            let opsiHtml = "";
+            if (res.jenis_soal_terpilih === 'Benar Salah beserta alasan' && res.opsi_jawaban?.length > 0) {
+                opsiHtml = `
+                <div class="mt-6 p-5 bg-slate-50 border-2 border-slate-200 border-dashed rounded-2xl flex flex-col gap-5 text-slate-700 font-extrabold text-sm sm:text-base">
+                    <p class="text-slate-500 uppercase text-xs tracking-widest flex items-center gap-1.5"><i data-lucide="edit-3" class="w-4 h-4"></i> Area Pilihan Murid</p>
+                    <div class="flex gap-8 items-center justify-center w-full">
+                        <div class="flex items-center gap-3 cursor-pointer hover:text-blue-600 transition-colors">
+                            <div class="w-6 h-6 border-2 border-slate-400 rounded-full bg-white flex items-center justify-center"></div> BENAR
+                        </div>
+                        <div class="flex items-center gap-3 cursor-pointer hover:text-red-600 transition-colors">
+                            <div class="w-6 h-6 border-2 border-slate-400 rounded-full bg-white flex items-center justify-center"></div> SALAH
+                        </div>
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center gap-4 mt-2 w-full">
+                        <span class="whitespace-nowrap text-slate-600 font-bold shrink-0">Pilih Alasan:</span>
+                        <select class="flex-1 rounded-xl border-slate-300 border-2 p-3 bg-white text-sm font-semibold text-slate-700 outline-none w-full shadow-sm focus:border-blue-500 cursor-pointer max-w-full">
+                            <option value="">-- Pilih alasan yang tepat --</option>
+                            ${res.opsi_jawaban.map((alasan) => `<option value="${alasan}">${alasan}</option>`).join('')}
+                        </select>
+                    </div>
+                </div>
+                `;
+            } else if (res.opsi_jawaban?.length > 0) {
+                opsiHtml = `
+                <div class="grid gap-3 w-full">
+                    ${res.opsi_jawaban.map((o, i) => `
+                        <div class="flex items-start gap-3 p-4 rounded-xl border border-slate-100 font-bold text-slate-800 shadow-sm bg-white text-sm sm:text-base transition-colors hover:border-blue-200 w-full break-words">
+                            ${res.jenis_soal_terpilih === 'Pilihan Ganda Kompleks' 
+                                ? `<div class="mt-1 w-6 h-6 sm:w-7 sm:h-7 border-2 border-slate-300 rounded-md shrink-0 bg-slate-50"></div>`
+                                : `<span class="w-6 h-6 sm:w-8 sm:h-8 flex items-center justify-center bg-blue-50 text-blue-900 rounded-full shrink-0 text-xs sm:text-sm border border-blue-100">${['A','B','C','D'][i] || '-'}</span>`
+                            }
+                            <span class="pt-1 leading-relaxed break-words">${o}</span>
+                        </div>
+                    `).join('')}
+                </div>
+                `;
+            } else {
+                opsiHtml = `
+                <div class="w-full min-h-[140px] border-4 border-dashed border-slate-200 rounded-2xl flex items-center justify-center bg-slate-50">
+                    <p class="text-slate-400 font-black uppercase tracking-widest text-xs sm:text-sm">Area Jawaban Murid</p>
+                </div>
+                `;
+            }
+
             return `
-            <div class="bg-white rounded-[2.5rem] shadow-sm border border-slate-200 overflow-hidden flex flex-col h-full animate-fade-in">
-                <div class="bg-white border-b-2 border-slate-100 p-8 sm:p-10">
-                    <div class="flex flex-wrap gap-4 justify-between items-start mb-8">
+            <div class="bg-white rounded-2xl sm:rounded-[2.5rem] shadow-xl border border-slate-200 overflow-hidden flex flex-col h-full animate-fade-in w-full">
+                <div class="bg-white border-b-2 border-slate-100 p-6 sm:p-10 w-full">
+                    <div class="flex flex-col lg:flex-row justify-between items-start gap-4 mb-6">
                         <div class="space-y-1">
-                            <h2 class="text-2xl font-black text-blue-950 uppercase tracking-tight">INSTRUMEN EVALUASI MURID</h2>
-                            <p class="text-slate-500 font-bold flex items-center gap-2 tracking-wide"><i data-lucide="user" class="w-4 h-4"></i> ${res.author.nama} | ${res.author.instansi}</p>
+                            <h2 class="text-xl sm:text-2xl font-black text-blue-950 uppercase tracking-tight">INSTRUMEN EVALUASI MURID</h2>
+                            <p class="text-xs sm:text-sm text-slate-500 font-bold flex items-center gap-2"><i data-lucide="user" class="w-3 h-3 sm:w-4 sm:h-4"></i> ${res.author.nama} | ${res.author.instansi}</p>
                         </div>
-                        <button onclick="window.print()" class="no-print inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-6 rounded-2xl transition-all shadow-md active:scale-95">
-                            <i data-lucide="printer" class="w-5 h-5"></i> Unduh PDF / Cetak
-                        </button>
-                    </div>
-                    <div class="grid grid-cols-2 gap-8">
-                        <div><p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Bidang / Mata Pelajaran</p><p class="font-bold text-blue-900 text-lg uppercase">${res.mapel}</p></div>
-                        <div><p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Kelas Asesmen</p><p class="font-bold text-slate-800 text-lg uppercase">Kelas ${res.kelas} SD (${res.mode === 'Kurmer' ? 'Kurikulum Merdeka' : 'TKA'})</p></div>
-                        <div class="col-span-2"><p class="text-[10px] text-slate-400 font-black uppercase tracking-widest mb-1">Target Kompetensi / TP</p><p class="font-bold text-slate-700 text-sm leading-relaxed italic border-l-4 border-slate-200 pl-4">"${res.topik}"</p></div>
-                    </div>
-                </div>
-
-                <div class="p-8 sm:p-12 space-y-10 flex-grow bg-white">
-                    <div class="bg-slate-50 p-8 rounded-3xl border-2 border-slate-100 relative shadow-inner">
-                        <div class="absolute -top-4 left-8 bg-white px-4 py-1 rounded-full text-xs font-black border-2 border-slate-100 text-slate-500 flex items-center gap-2">
-                            <i data-lucide="file-text" class="w-4 h-4"></i> STIMULUS & WACANA
+                        
+                        <div class="flex flex-col sm:flex-row gap-2 w-full lg:w-auto">
+                            <button type="button" onclick="copyToClipboard()" class="no-print w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl transition-all active:scale-95 text-sm shadow-md">
+                                <i data-lucide="copy" class="w-4 h-4"></i> Salin Teks Soal
+                            </button>
+                            <button type="button" onclick="window.print()" class="no-print w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2.5 px-5 rounded-xl transition-all active:scale-95 text-sm shadow-md">
+                                <i data-lucide="printer" class="w-4 h-4"></i> Cetak / PDF
+                            </button>
                         </div>
-                        <p class="text-slate-900 leading-relaxed text-lg font-medium whitespace-pre-wrap">${res.stimulus}</p>
                     </div>
-                    <div class="space-y-6">
-                        <div class="font-black text-slate-950 text-xl md:text-2xl leading-tight pl-2 border-l-4 border-blue-900">${res.pertanyaan}</div>
-                        ${res.opsi_jawaban && res.opsi_jawaban.length > 0 ? `
-                            <div class="grid gap-4">
-                                ${res.opsi_jawaban.map((o, i) => `
-                                    <div class="flex items-start gap-4 p-5 rounded-2xl border-2 border-slate-100 font-bold text-slate-800 shadow-sm bg-white">
-                                        <span class="w-8 h-8 flex items-center justify-center bg-blue-50 text-blue-900 rounded-full shrink-0">${['A','B','C','D'][i]}</span>
-                                        <span class="pt-0.5">${o}</span>
-                                    </div>
-                                `).join('')}
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm w-full">
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                            <p class="text-[9px] text-slate-400 font-black uppercase mb-1">Mata Pelajaran</p>
+                            <p class="font-bold text-blue-900 uppercase">${res.mapel}</p>
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 flex flex-col">
+                            <p class="text-[9px] text-slate-400 font-black uppercase mb-1">Sasaran & Level Kognitif</p>
+                            <div class="flex items-center justify-between gap-2 mt-auto">
+                                <p class="font-bold text-slate-800 uppercase">Kelas ${res.kelas} SD (${res.mode === 'Kurmer' ? 'Asesmen Reguler' : 'TKA'})</p>
+                                <span class="px-2 py-0.5 rounded-md font-extrabold text-[10px] border ${levelColor}">${levelLabel}</span>
                             </div>
-                        ` : `<div class="w-full min-h-[160px] border-4 border-dashed border-slate-200 rounded-3xl p-8 flex items-center justify-center"><p class="text-slate-300 font-black uppercase tracking-widest">Kolom Jawaban Siswa</p></div>`}
+                        </div>
+                        
+                        <div class="sm:col-span-2 bg-slate-50 p-4 rounded-xl border border-slate-100 w-full">
+                            <p class="text-[9px] text-slate-400 font-black uppercase mb-1">Target Kompetensi / Tujuan Pembelajaran</p>
+                            <p class="font-bold text-slate-700 leading-relaxed italic border-l-3 border-slate-300 pl-3">"${res.topik}"</p>
+                        </div>
+                        
+                        <!-- INDIKATOR SOAL -->
+                        <div class="sm:col-span-2 bg-blue-50/60 p-5 rounded-xl border-2 border-blue-200 shadow-sm mt-1 w-full">
+                            <p class="text-[10px] text-blue-800 font-black uppercase mb-2 flex items-center gap-1.5"><i data-lucide="target" class="w-4 h-4"></i> Rumusan Indikator Soal</p>
+                            <p class="font-bold text-blue-950 text-sm sm:text-base leading-relaxed">${indikatorText}</p>
+                        </div>
                     </div>
                 </div>
 
-                <div class="no-print border-t-2 border-slate-100 bg-slate-50 mt-auto">
-                    <details class="group">
-                        <summary class="w-full p-8 flex items-center justify-between font-black text-blue-900 cursor-pointer list-none hover:bg-slate-100 transition-colors">
-                            <span class="flex items-center gap-3"><i data-lucide="brain" class="w-6 h-6"></i> KUNCI JAWABAN & TELAHAAN PEDAGOGIS</span>
-                            <i data-lucide="chevron-down" class="w-6 h-6 transition group-open:rotate-180 text-slate-400"></i>
+                <div class="p-6 sm:p-10 space-y-8 flex-grow bg-white w-full">
+                    <div class="bg-slate-50 p-5 sm:p-8 rounded-2xl border border-slate-100 relative shadow-inner">
+                        <div class="absolute -top-3 left-6 bg-white px-3 py-0.5 rounded-full text-[10px] font-black border border-slate-100 text-slate-500 flex items-center gap-1.5"><i data-lucide="file-text" class="w-3 h-3"></i> STIMULUS</div>
+                        <p class="text-slate-900 leading-relaxed text-sm sm:text-lg font-medium whitespace-pre-wrap">${res.stimulus}</p>
+                    </div>
+                    <div class="space-y-5 w-full">
+                        <div class="font-black text-slate-950 text-base sm:text-xl leading-tight pl-3 border-l-4 border-blue-900 break-words">${res.pertanyaan}</div>
+                        ${opsiHtml}
+                    </div>
+                </div>
+
+                <div class="no-print border-t border-slate-200 bg-slate-50 mt-auto w-full">
+                    <details class="group w-full">
+                        <summary class="w-full p-6 sm:p-8 flex items-center justify-between font-black text-blue-900 cursor-pointer list-none hover:bg-slate-100 transition-colors text-sm sm:text-base outline-none">
+                            <span class="flex items-center gap-3"><i data-lucide="brain" class="w-5 h-5"></i> KUNCI & ANALISIS PEDAGOGIS</span>
+                            <i data-lucide="chevron-down" class="w-5 h-5 transition-transform group-open:rotate-180 text-slate-400"></i>
                         </summary>
-                        <div class="p-8 bg-white border-t-2 border-slate-100 space-y-8 font-medium">
-                            <div class="p-6 bg-emerald-50 border-2 border-emerald-100 rounded-3xl">
-                                <p class="text-[10px] font-black text-emerald-600 uppercase mb-2 tracking-widest">Solusi Benar</p>
-                                <p class="font-black text-emerald-950 text-xl">${res.kunci_jawaban}</p>
+                        <div class="p-6 sm:p-8 bg-white border-t border-slate-100 space-y-6 font-medium w-full">
+                            <div class="p-5 bg-emerald-50 border border-emerald-100 rounded-2xl w-full">
+                                <p class="text-[9px] font-black text-emerald-600 uppercase mb-1 tracking-widest">Solusi Benar</p>
+                                <p class="font-black text-emerald-950 text-base sm:text-xl break-words">${res.kunci_jawaban}</p>
                             </div>
-                            <div>
-                                <p class="text-[10px] font-black text-blue-900 uppercase mb-4 tracking-widest">Analisis Pembelajaran Mendalam (HOTS)</p>
-                                <div class="bg-slate-50 p-6 rounded-3xl border border-slate-200 leading-relaxed text-slate-700">${res.pembahasan}</div>
+                            <div class="w-full">
+                                <p class="text-[9px] font-black text-blue-900 uppercase mb-3 tracking-widest">Analisis Pembelajaran</p>
+                                <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100 text-xs sm:text-sm text-slate-700 leading-relaxed break-words">${res.pembahasan}</div>
                             </div>
                         </div>
                     </details>
@@ -562,85 +1161,78 @@
 
         function renderEmptyState() {
             return `
-            <div class="h-full min-h-[500px] bg-white rounded-[3rem] border-2 border-slate-200 border-dashed flex flex-col items-center justify-center text-slate-400 p-10 text-center">
-                <i data-lucide="target" class="w-16 h-16 mb-6 text-slate-200"></i>
-                <h3 class="text-2xl font-bold text-slate-800 mb-2">Pratinjau Instrumen</h3>
-                <p class="max-w-xs font-medium">Selesaikan konfigurasi di samping untuk memproduksi soal berbasis Pembelajaran Mendalam.</p>
+            <div class="h-full min-h-[300px] sm:min-h-[500px] glass-card rounded-2xl sm:rounded-[3rem] border-2 border-white/60 border-dashed flex flex-col items-center justify-center text-slate-500 p-8 text-center w-full">
+                <i data-lucide="target" class="w-12 h-12 sm:w-16 sm:h-16 mb-6 text-blue-200"></i>
+                <h3 class="text-xl sm:text-2xl font-bold text-blue-950 mb-2">Pratinjau Instrumen</h3>
+                <p class="max-w-xs font-medium text-xs sm:text-base text-slate-600">Selesaikan konfigurasi di samping untuk memproduksi soal.</p>
             </div>
             `;
         }
 
-        // --- UTILITY FUNCTIONS ---
-
-        window.navigate = (view) => {
-            state.view = view;
-            render();
-        };
-
-        window.setMode = (mode) => {
-            state.mode = mode;
-            state.result = null;
-            if (mode === 'TKA') state.kelas = '5';
-            updateTPs();
-            render();
-        };
-
-        window.updateTPs = () => {
-            const fase = getFase(state.kelas);
-            const list = TP_DATA[state.mapel]?.[fase] || [];
-            state.tujuanPembelajaran = list.length > 0 ? list[0] : 'Lainnya';
-            state.topikTKA = TKA_MATRIKS_TOPIK[state.mapelTKA][0];
-            state.kognitifTKA = TKA_KOGNITIF[state.mapelTKA][0];
-            render();
-        };
+        function renderErrorState() {
+            return `
+            <div class="h-full min-h-[300px] sm:min-h-[500px] glass-card rounded-2xl sm:rounded-[3rem] border-2 border-red-200 border-dashed flex flex-col items-center justify-center text-red-500 p-8 text-center w-full animate-fade-in">
+                <i data-lucide="alert-circle" class="w-12 h-12 sm:w-16 sm:h-16 mb-6 text-red-400"></i>
+                <h3 class="text-xl sm:text-2xl font-bold text-red-900 mb-2">Terjadi Kesalahan</h3>
+                <p class="max-w-xs font-medium text-xs sm:text-base text-red-700">${state.error}</p>
+                <button type="button" onclick="generateSoal(event)" class="mt-6 px-6 py-2.5 bg-red-100 text-red-800 rounded-xl font-bold hover:bg-red-200 transition text-sm">Coba Lagi</button>
+            </div>
+            `;
+        }
 
         window.toggleModal = (type) => {
             const container = document.getElementById('modal-container');
-            if (!type) {
-                container.classList.add('hidden');
-                return;
-            }
-
-            let title = '', icon = '', colorClass = '', content = '';
+            if (!type) { container.classList.add('hidden'); return; }
             
-            if (type === 'panduan') {
-                title = 'Panduan Penggunaan'; icon = 'file-text'; colorClass = 'bg-blue-100 text-blue-800';
+            let title, content, icon, color;
+            if(type === 'panduan'){
+                title = 'Panduan Penggunaan'; icon = 'file-text'; color='bg-blue-100 text-blue-800';
                 content = `
-                <ul class="space-y-8 font-medium">
-                    <li class="flex items-start gap-5"><div class="flex-shrink-0 w-12 h-12 bg-blue-50 text-blue-800 font-bold rounded-full flex items-center justify-center border-2 border-blue-200 text-xl shadow-sm">1</div><div class="pt-1"><h3 class="font-bold text-blue-950 text-xl">Lengkapi Profil</h3><p class="text-slate-500 mt-2 leading-relaxed text-base">Isi nama dan instansi Anda di halaman beranda agar identitas Anda tercetak otomatis pada lembar soal.</p></div></li>
-                    <li class="flex items-start gap-5"><div class="flex-shrink-0 w-12 h-12 bg-blue-50 text-blue-800 font-bold rounded-full flex items-center justify-center border-2 border-blue-200 text-xl shadow-sm">2</div><div class="pt-1"><h3 class="font-bold text-blue-950 text-xl">Pilih Mode & Cabang</h3><p class="text-slate-500 mt-2 leading-relaxed text-base">Gunakan Kurikulum Merdeka untuk semua kelas atau Mode TKA untuk evaluasi standar nasional kelas 5-6.</p></div></li>
-                    <li class="flex items-start gap-5"><div class="flex-shrink-0 w-12 h-12 bg-blue-50 text-blue-800 font-bold rounded-full flex items-center justify-center border-2 border-blue-200 text-xl shadow-sm">3</div><div class="pt-1"><h3 class="font-bold text-blue-950 text-xl">Hasil & Cetak PDF</h3><p class="text-slate-500 mt-2 leading-relaxed text-base">Setelah soal diracik AI, klik tombol <strong>"Unduh PDF / Cetak"</strong> untuk menyimpan instrumen.</p></div></li>
+                <ul class="space-y-6 text-sm sm:text-base font-medium text-slate-700">
+                    <li class="flex items-start gap-4">
+                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-bold">1</span>
+                        <span><strong class="text-blue-950">Lengkapi Profil Pengampu:</strong> Masukkan nama dan instansi agar otomatis tercetak di bagian atas (kop) instrumen evaluasi.</span>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-bold">2</span>
+                        <span><strong class="text-blue-950">Pilih Mode Asesmen:</strong> Gunakan <i>Asesmen Reguler</i> (berbasis TP Kurmer) atau <i>Asesmen TKA</i> (berbasis matriks kompetensi Pusmendik).</span>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-bold">3</span>
+                        <span><strong class="text-blue-950">Atur Konfigurasi:</strong> Tentukan Kelas, Jenis Soal, dan Target TP/Matriks. Pilih tingkat taksonomi kognitif sesuai kebutuhan belajar (LOTS/HOTS).</span>
+                    </li>
+                    <li class="flex items-start gap-4">
+                        <span class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 text-blue-800 flex items-center justify-center font-bold">4</span>
+                        <span><strong class="text-blue-950">Salin / Cetak PDF:</strong> Setelah pratinjau soal muncul, klik Salin Teks Soal untuk dipindah ke Word/Docs, atau klik tombol Cetak/Simpan PDF untuk mengunduh lembar soal bersih tanpa tombol konfigurasi.</span>
+                    </li>
                 </ul>`;
             } else {
-                title = 'Rangkuman HOTS & TKA'; icon = 'lightbulb'; colorClass = 'bg-emerald-100 text-emerald-800';
+                title = 'Memahami HOTS & LOTS'; icon = 'lightbulb'; color='bg-emerald-100 text-emerald-800';
                 content = `
-                <div class="space-y-6 font-medium text-slate-700 leading-relaxed">
-                    <p><strong class="text-blue-950">HOTS</strong> berfokus pada kemampuan menganalisis, mengevaluasi, dan mencipta dengan stimulus yang kontekstual.</p>
-                    <div class="grid sm:grid-cols-2 gap-4">
-                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100"><h4 class="font-bold text-blue-900 mb-2">Bloom (C1-C6)</h4><ul class="text-sm space-y-1"><li>C4: Menganalisis</li><li>C5: Mengevaluasi</li><li>C6: Mengkreasi</li></ul></div>
-                        <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100"><h4 class="font-bold text-emerald-900 mb-2">Taksonomi SOLO</h4><ul class="text-sm space-y-1"><li>Relational: Hubungan Konsep</li><li>Extended Abstract: Generalisasi</li></ul></div>
+                <div class="space-y-5 text-sm sm:text-base font-medium text-slate-700">
+                    <p><strong class="text-emerald-700">LOTS (Low Order)</strong> berfokus pada hafalan (C1), pemahaman dasar (C2), atau penerapan rumus/konsep di konteks yang sudah dikenal/rutin (C3).</p>
+                    <p><strong class="text-amber-600">HOTS (High Order)</strong> BUKAN sekadar soal dengan angka besar, melainkan soal yang menuntut proses <strong>Penalaran (Level 3)</strong>. Anak harus mentransfer pengetahuan ke konteks kehidupan nyata yang baru secara analisis (C4), evaluasi (C5), atau kreasi (C6).</p>
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100">
+                        <p class="mb-2"><strong class="text-blue-950">Rumusan Indikator Soal:</strong><br>
+                        Syarat indikator HOTS adalah adanya stimulus, konteks baru, dan KKO tingkat tinggi.</p>
+                        <p class="italic text-slate-600 text-sm">Format: "Disajikan permasalahan sehari-hari yang berkaitan dengan keliling bangun datar, murid dapat menentukan ukuran bangun tersebut sesuai syarat tertentu."</p>
                     </div>
-                    <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100"><h4 class="font-bold text-blue-950 mb-2">TKA (Tes Kemampuan Akademik)</h4><p class="text-sm">Asesmen nasional kelas 5-6 pada domain Bahasa Indonesia dan Matematika dengan matriks kompetensi Pusmendik.</p></div>
                 </div>`;
             }
 
             container.innerHTML = `
-            <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/50 backdrop-blur-sm animate-fade-in">
-                <div class="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-100 flex flex-col">
-                    <div class="flex items-center justify-between p-6 border-b border-slate-100 sticky top-0 bg-white/95 backdrop-blur z-10">
-                        <div class="flex items-center gap-4">
-                            <div class="p-3 rounded-2xl ${colorClass}"><i data-lucide="${icon}" class="w-6 h-6"></i></div>
-                            <h2 class="text-2xl font-bold text-slate-800 tracking-tight">${title}</h2>
-                        </div>
-                        <button onclick="toggleModal(null)" class="p-2 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"><i data-lucide="x" class="w-6 h-6"></i></button>
+            <div class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fade-in w-full">
+                <div class="bg-white rounded-3xl w-full max-w-lg max-h-[85vh] overflow-y-auto shadow-2xl border border-slate-100">
+                    <div class="flex items-center justify-between p-5 border-b sticky top-0 bg-white/95 backdrop-blur z-10 w-full">
+                        <div class="flex items-center gap-3"><div class="p-2 rounded-xl ${color} shrink-0"><i data-lucide="${icon}" class="w-5 h-5"></i></div><h2 class="font-bold text-lg text-slate-800">${title}</h2></div>
+                        <button onclick="toggleModal(null)" class="p-1.5 text-slate-400 hover:bg-slate-100 rounded-full transition-colors"><i data-lucide="x" class="w-5 h-5"></i></button>
                     </div>
-                    <div class="p-6 sm:p-8">${content}</div>
+                    <div class="p-6 w-full">${content}</div>
                 </div>
-            </div>
-            `;
+            </div>`;
             container.classList.remove('hidden');
             lucide.createIcons();
-        }
+        };
 
         // --- INITIALIZE ---
         window.onload = () => {
