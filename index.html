@@ -15,7 +15,6 @@
         body {
             font-family: 'Quicksand', sans-serif;
             background-color: #f8fafc;
-            /* Latar belakang global untuk seluruh halaman */
             background-image: url('https://i.imgur.com/rQgDTWM.jpeg');
             background-size: cover;
             background-position: center;
@@ -24,51 +23,26 @@
             scroll-behavior: smooth;
         }
         
-        /* Lapisan overlay gelap agar teks di atas background tetap jelas terbaca */
         .bg-overlay {
             position: fixed;
             inset: 0;
-            background-color: rgba(30, 58, 138, 0.65); /* Biru navy semi-transparan */
+            background-color: rgba(30, 58, 138, 0.65);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
             z-index: -1;
         }
 
-        .font-edutech {
-            font-family: 'Quicksand', sans-serif;
-        }
+        .font-edutech { font-family: 'Quicksand', sans-serif; }
         
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #94a3b8;
-            border-radius: 10px;
-        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #94a3b8; border-radius: 10px; }
 
         @media print {
-            .no-print {
-                display: none !important;
-            }
-            .print-area {
-                box-shadow: none !important;
-                border: none !important;
-                padding: 0 !important;
-                margin: 0 !important;
-                width: 100% !important;
-                display: block !important;
-            }
-            body {
-                background: none !important;
-                background-color: white !important;
-            }
-            .bg-overlay {
-                display: none !important;
-            }
+            .no-print { display: none !important; }
+            .print-area { box-shadow: none !important; border: none !important; padding: 0 !important; margin: 0 !important; width: 100% !important; display: block !important; }
+            body { background: none !important; background-color: white !important; }
+            .bg-overlay { display: none !important; }
         }
 
         .glass-card {
@@ -78,421 +52,84 @@
             border: 1px solid rgba(255, 255, 255, 0.4);
         }
 
-        .animate-fade-in {
-            animation: fadeIn 0.4s ease-out forwards;
-        }
-
+        .animate-fade-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(15px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Menghindari pemotongan teks pada select agar tampil utuh di HP */
-        select {
-            white-space: normal !important;
-            word-wrap: break-word !important;
-            height: auto !important;
-        }
-        select option {
-            white-space: normal;
-            padding: 8px;
-        }
+        select { white-space: normal !important; word-wrap: break-word !important; height: auto !important; }
+        select option { white-space: normal; padding: 8px; }
     </style>
 </head>
 <body class="text-slate-800 antialiased relative flex flex-col min-h-screen">
     
-    <!-- Overlay Background -->
     <div class="bg-overlay"></div>
+    <div id="app" class="relative z-10 flex-grow w-full"></div>
 
-    <div id="app" class="relative z-10 flex-grow w-full">
-        <!-- Konten akan dirender di sini via JS -->
-    </div>
-
-    <!-- Footer Ide Pengembang -->
     <div class="text-center py-6 mt-auto text-white drop-shadow-md font-medium text-xs sm:text-sm no-print relative z-10 w-full">
         Ide Pengembang oleh: <strong class="font-bold">Abdul Rahmat SDN 011 Balikpapan Tengah</strong>
     </div>
 
     <script>
-        // --- DATABASE TP LENGKAP (TIDAK ADA YANG DIKURANGI) ---
+        // ====================================================================================
+        // KONFIGURASI URL APPS SCRIPT
+        // MASUKKAN URL WEB APP GOOGLE APPS SCRIPT ANDA DI SINI
+        // ====================================================================================
+        const APPS_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyJrRwUjwlPWLKtVhd-_BsizeDnK3DTgFB0p2GXaCOn8rW5aoRRtZnwvaB4zDcH5r5y/exec"; 
+
+        // --- DATABASE TP LENGKAP ---
         const TP_DATA = {
             'Pendidikan Pancasila': {
-                'A': [
-                    'Mengenal bendera negara, lagu kebangsaan, lambang negara Garuda Pancasila, dan simbol Pancasila beserta sila-sila Pancasila.',
-                    'Menerapkan nilai-nilai Pancasila di lingkungan keluarga.',
-                    'Mengenal aturan di lingkungan keluarga.',
-                    'Menunjukkan sikap serta mematuhi aturan di lingkungan keluarga.',
-                    'Menceritakan contoh sikap mematuhi aturan di lingkungan keluarga.',
-                    'Mengenal semboyan Bhinneka Tunggal Ika.',
-                    'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan jenis kelamin di lingkungan sekitar.',
-                    'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan hobi di lingkungan sekitar.',
-                    'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan bahasa di lingkungan sekitar.',
-                    'Mengenal karakteristik lingkungan tempat tinggal dan sekolah, sebagai bagian dari wilayah Negara Kesatuan Republik Indonesia.',
-                    'Menjaga lingkungan tempat tinggal dan sekolah.',
-                    'Menceritakan perilaku kerja sama dalam keberagaman di lingkungan tempat tinggal dan sekolah.',
-                    'Mempraktikkan bekerja sama menjaga lingkungan sekitar dalam keberagaman.'
-                ],
-                'B': [
-                    'Menunjukkan sikap bangga menjadi anak Indonesia yang memiliki bahasa Indonesia sebagai bahasa persatuan di lingkungan sekitar.',
-                    'Mengenal lingkungan tempat tinggal (RT, RW, dan desa/kelurahan) sebagai bagian tidak terpisahkan dari wilayah NKRI.',
-                    'Memahami, mengidentifikasi, membuat, dan menerapkan aturan di sekolah dan lingkungan tempat tinggal.',
-                    'Mengidentifikasi dan menerapkan hak yang didapat dan kewajiban sebagai anggota keluarga dan warga sekolah.',
-                    'Menunjukkan dan mengidentifikasi makna sila-sila Pancasila dalam kehidupan sehari-hari.',
-                    'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan agama dan kepercayaan di lingkungan sekitar.',
-                    'Mengidentifikasi dan meneladani karakter para perumus Pancasila.',
-                    'Membedakan dan menghargai identitas keluarga dan teman-temannya sesuai budaya, suku bangsa, bahasa, agama dan kepercayaan di lingkungan sekitar.',
-                    'Mengenal lingkungan tempat tinggal hingga tingkat kecamatan sebagai bagian wilayah NKRI.',
-                    'Menerapkan makna sila-sila Pancasila dalam kehidupan sehari-hari.'
-                ],
-                'C': [
-                    'Menguraikan makna nilai-nilai Pancasila sebagai dasar negara, dan pandangan hidup bangsa.',
-                    'Menghubungkan sila-sila dalam Pancasila sebagai suatu kesatuan yang utuh.',
-                    'Mengidentifikasi, menyajikan hasil identifikasi, dan menerapkan bentuk-bentuk norma, hak, dan kewajiban dalam kedudukannya sebagai warga negara.',
-                    'Mengenal makna pembukaan UUD NRI Tahun 1945.',
-                    'Mempraktikkan musyawarah untuk membuat kesepakatan dan aturan bersama dalam kehidupan sehari-hari di lingkungan keluarga dan sekolah.',
-                    'Mengidentifikasi dan menyajikan hasil identifikasi sikap menghormati, menjaga, dan melestarikan keberagaman budaya sesuai semboyan Bhinneka Tunggal Ika di lingkungan sekitar.',
-                    'Menggambarkan wilayahnya dalam konteks kabupaten/kota, provinsi sebagai bagian dari wilayah NKRI.',
-                    'Memahami makna dan mempraktikkan perilaku gotong royong untuk menjaga persatuan dan kesatuan di lingkungan sekolah dan sekitar sebagai wujud bela negara.'
-                ]
+                'A': ['Mengenal bendera negara, lagu kebangsaan, lambang negara Garuda Pancasila, dan simbol Pancasila beserta sila-sila Pancasila.', 'Menerapkan nilai-nilai Pancasila di lingkungan keluarga.', 'Mengenal aturan di lingkungan keluarga.', 'Menunjukkan sikap serta mematuhi aturan di lingkungan keluarga.', 'Menceritakan contoh sikap mematuhi aturan di lingkungan keluarga.', 'Mengenal semboyan Bhinneka Tunggal Ika.', 'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan jenis kelamin di lingkungan sekitar.', 'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan hobi di lingkungan sekitar.', 'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan bahasa di lingkungan sekitar.', 'Mengenal karakteristik lingkungan tempat tinggal dan sekolah, sebagai bagian dari wilayah Negara Kesatuan Republik Indonesia.', 'Menjaga lingkungan tempat tinggal dan sekolah.', 'Menceritakan perilaku kerja sama dalam keberagaman di lingkungan tempat tinggal dan sekolah.', 'Mempraktikkan bekerja sama menjaga lingkungan sekitar dalam keberagaman.'],
+                'B': ['Menunjukkan sikap bangga menjadi anak Indonesia yang memiliki bahasa Indonesia sebagai bahasa persatuan di lingkungan sekitar.', 'Mengenal lingkungan tempat tinggal (RT, RW, dan desa/kelurahan) sebagai bagian tidak terpisahkan dari wilayah NKRI.', 'Memahami, mengidentifikasi, membuat, dan menerapkan aturan di sekolah dan lingkungan tempat tinggal.', 'Mengidentifikasi dan menerapkan hak yang didapat dan kewajiban sebagai anggota keluarga dan warga sekolah.', 'Menunjukkan dan mengidentifikasi makna sila-sila Pancasila dalam kehidupan sehari-hari.', 'Mengidentifikasi dan menghargai identitas dirinya sesuai dengan agama dan kepercayaan di lingkungan sekitar.', 'Mengidentifikasi dan meneladani karakter para perumus Pancasila.', 'Membedakan dan menghargai identitas keluarga dan teman-temannya sesuai budaya, suku bangsa, bahasa, agama dan kepercayaan di lingkungan sekitar.', 'Mengenal lingkungan tempat tinggal hingga tingkat kecamatan sebagai bagian wilayah NKRI.', 'Menerapkan makna sila-sila Pancasila dalam kehidupan sehari-hari.'],
+                'C': ['Menguraikan makna nilai-nilai Pancasila sebagai dasar negara, dan pandangan hidup bangsa.', 'Menghubungkan sila-sila dalam Pancasila sebagai suatu kesatuan yang utuh.', 'Mengidentifikasi, menyajikan hasil identifikasi, dan menerapkan bentuk-bentuk norma, hak, dan kewajiban dalam kedudukannya sebagai warga negara.', 'Mengenal makna pembukaan UUD NRI Tahun 1945.', 'Mempraktikkan musyawarah untuk membuat kesepakatan dan aturan bersama dalam kehidupan sehari-hari di lingkungan keluarga dan sekolah.', 'Mengidentifikasi dan menyajikan hasil identifikasi sikap menghormati, menjaga, dan melestarikan keberagaman budaya sesuai semboyan Bhinneka Tunggal Ika di lingkungan sekitar.', 'Menggambarkan wilayahnya dalam konteks kabupaten/kota, provinsi sebagai bagian dari wilayah NKRI.', 'Memahami makna dan mempraktikkan perilaku gotong royong untuk menjaga persatuan dan kesatuan di lingkungan sekolah dan sekitar sebagai wujud bela negara.']
             },
             'Bahasa Indonesia': {
-                'A': [
-                    'Memahami informasi dari teks nonsastra berbentuk teks aural berupa percakapan yang berkaitan dengan diri.',
-                    'Membaca kata-kata sederhana dengan fasih dari bacaan dan/atau tayangan yang dipirsa tentang diri dan/atau keluarga.',
-                    'Menulis permulaan dengan benar di atas kertas dan/atau melalui media digital.',
-                    'Memahami informasi dari teks nonsastra berbentuk teks aural berupa percakapan yang berkaitan dengan keluarga.',
-                    'Merespons dengan bertanya tentang sesuatu, menjawab, dan menanggapi komentar orang lain dengan baik dan santun dalam suatu percakapan tentang diri dan/atau keluarga.',
-                    'Memahami isi bacaan dan/atau tayangan yang dipirsa tentang diri dan/atau keluarga.',
-                    'Menceritakan kembali isi berbagai tipe teks yang dibaca, dipirsa, atau didengar tentang diri dan/atau keluarga.',
-                    'Mengembangkan tulisan tangan yang semakin baik.',
-                    'Menulis berbagai tipe teks sederhana tentang diri dan/atau keluarga dengan beberapa kalimat sederhana.',
-                    'Memahami pesan teks sastra berbentuk teks aural.',
-                    'Mengungkapkan perasaan dan gagasan secara lisan dengan atau tanpa bantuan gambar.',
-                    'Memahami informasi dari teks nonsastra berbentuk teks aural berupa percakapan yang berkaitan dengan lingkungan sekitar.',
-                    'Membaca kata-kata sederhana dengan fasih dari bacaan dan/atau tayangan yang dipirsa tentang kesehatan dan/atau lingkungan sekitar.',
-                    'Memahami isi bacaan dan/atau tayangan yang dipirsa tentang kesehatan dan/atau lingkungan sekitar.',
-                    'Merespons dengan bertanya tentang sesuatu, menjawab, dan menanggapi komentar orang lain dengan baik dan santun dalam suatu percakapan tentang kesehatan dan/atau lingkungan sekitar.',
-                    'Menceritakan kembali isi berbagai tipe teks yang dibaca, dipirsa, atau didengar kesehatan, dan/atau lingkungan sekitar.',
-                    'Menulis berbagai tipe teks sederhana tentang lingkungan sekitar dengan beberapa kalimat sederhana.'
-                ],
-                'B': [
-                    'Membaca kata-kata baru dari teks nonsastra yang dibaca/dipirsa secara fasih dan benar.',
-                    'Mengidentifikasi ide pokok dari teks aural nonsastra yang didengarkan.',
-                    'Mengidentifikasi informasi dalam teks nonsastra yang dibaca/dipirsa.',
-                    'Menceritakan kembali isi teks yang dibaca, dipirsa, atau didengar secara runtut dan jelas.',
-                    'Menyampaikan pendapat sederhana secara lisan menggunakan kata-kata yang santun.',
-                    'Menyampaikan kembali informasi penting dari teks menggunakan kosakata sendiri secara lisan.',
-                    'Menggunakan volume dan intonasi suara saat berbicara di depan teman sesuai situasi.',
-                    'Menyampaikan pendapat dengan sikap tubuh yang sesuai.',
-                    'Menyusun kalimat sederhana secara tepat menggunakan kaidah kebahasaan dan kosakata baru yang memiliki makna denotatif.',
-                    'Menulis paragraf pendek dengan struktur kalimat yang runtut dan beragam.',
-                    'Menggunakan kosakata baru dengan makna denotatif dalam tulisan sederhana.',
-                    'Membaca teks sastra dengan intonasi dan ekspresi yang sesuai. Menemukan isi dari teks sastra lisan.',
-                    'Mengidentifikasi peristiwa utama dalam teks sastra yang dibaca/dipirsa.',
-                    'Menjelaskan ide pokok dari paragraf dalam teks nonsastra yang dibaca/dipirsa.',
-                    'Mengidentifikasi unsur intrinsik dalam teks sastra yang dibaca/dipirsa.',
-                    'Menjelaskan pesan atau amanat yang disampaikan dalam teks sastra yang dibaca/dipirsa.',
-                    'Menyimpulkan pesan dari teks sastra lisan.',
-                    'Membedakan antara informasi utama dan rincian dari teks nonsastra yang dibacakan dan/atau didengarkan.',
-                    'Menentukan ide pendukung yang memperkuat ide pokok dalam teks nonsastra berbentuk cetak dan/atau elektronik.',
-                    'Menyimpulkan isi teks nonsastra berdasarkan informasi yang dibaca/dipirsa.',
-                    'Menanggapi pendapat teman dengan kalimat yang baik dan sesuai tata cara diskusi sederhana.',
-                    'Memberikan alasan sederhana terhadap pendapat yang disampaikan.',
-                    'Menyampaikan pendapat yang didukung oleh informasi dari teks yang telah dibaca atau didengar.',
-                    'Menulis berbagai tipe teks sederhana sesuai konteks menggunakan kaidah kebahasaan dan kosakata baru yang memiliki makna denotatif.'
-                ],
-                'C': [
-                    'Membaca kata-kata dengan berbagai pola kombinasi huruf dengan fasih dari bacaan dan/atau tayangan yang dipirsa.',
-                    'Menganalisis informasi dari teks nonsastra berbentuk teks aural (teks yang dibacakan dan/atau didengarkan).',
-                    'Menganalisis informasi nonsastra berwujud teks visual dan/atau audiovisual.',
-                    'Menulis berbagai tipe teks sederhana berdasarkan pengalaman dengan rangkaian kalimat kompleks secara menarik menggunakan kosakata baru yang memiliki makna denotatif.',
-                    'Menyampaikan perasaan berdasarkan fakta (diri sendiri) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.',
-                    'Menganalisis isi teks sastra berbentuk teks aural.',
-                    'Menganalisis informasi dalam teks sastra berwujud teks visual dan/atau audiovisual.',
-                    'Menyampaikan perasaan berdasarkan imajinasi (diri sendiri) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.',
-                    'Menulis berbagai tipe teks sederhana berdasarkan gagasan dengan rangkaian kalimat kompleks secara kreatif.',
-                    'Menganalisis nilai-nilai dalam teks sastra berwujud teks visual dan/atau audiovisual.',
-                    'Menyampaikan perasaan berdasarkan fakta (orang lain) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.',
-                    'Menulis berbagai tipe teks sederhana berdasarkan hasil pengamatan dengan rangkaian kalimat kompleks secara kreatif menggunakan kaidah kebahasaan.',
-                    'Menyampaikan perasaan berdasarkan imajinasi (orang lain) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.',
-                    'Mempresentasikan gagasan dari berbagai tipe teks dengan efektif dan santun.',
-                    'Menganalisis nilai-nilai dalam berbagai tipe teks secara mendalam (nonsastra dan sastra, aural dan audiovisual).',
-                    'Menulis berbagai tipe teks sederhana berdasarkan imajinasi dengan rangkaian kalimat kompleks secara indah menggunakan kosakata baru yang memiliki makna konotatif.'
-                ]
+                'A': ['Memahami informasi dari teks nonsastra berbentuk teks aural berupa percakapan yang berkaitan dengan diri.', 'Membaca kata-kata sederhana dengan fasih dari bacaan dan/atau tayangan yang dipirsa tentang diri dan/atau keluarga.', 'Menulis permulaan dengan benar di atas kertas dan/atau melalui media digital.', 'Memahami informasi dari teks nonsastra berbentuk teks aural berupa percakapan yang berkaitan dengan keluarga.', 'Merespons dengan bertanya tentang sesuatu, menjawab, dan menanggapi komentar orang lain dengan baik dan santun dalam suatu percakapan tentang diri dan/atau keluarga.', 'Memahami isi bacaan dan/atau tayangan yang dipirsa tentang diri dan/atau keluarga.', 'Menceritakan kembali isi berbagai tipe teks yang dibaca, dipirsa, atau didengar tentang diri dan/atau keluarga.', 'Mengembangkan tulisan tangan yang semakin baik.', 'Menulis berbagai tipe teks sederhana tentang diri dan/atau keluarga dengan beberapa kalimat sederhana.', 'Memahami pesan teks sastra berbentuk teks aural.', 'Mengungkapkan perasaan dan gagasan secara lisan dengan atau tanpa bantuan gambar.', 'Memahami informasi dari teks nonsastra berbentuk teks aural berupa percakapan yang berkaitan dengan lingkungan sekitar.', 'Membaca kata-kata sederhana dengan fasih dari bacaan dan/atau tayangan yang dipirsa tentang kesehatan dan/atau lingkungan sekitar.', 'Memahami isi bacaan dan/atau tayangan yang dipirsa tentang kesehatan dan/atau lingkungan sekitar.', 'Merespons dengan bertanya tentang sesuatu, menjawab, dan menanggapi komentar orang lain dengan baik dan santun dalam suatu percakapan tentang kesehatan dan/atau lingkungan sekitar.', 'Menceritakan kembali isi berbagai tipe teks yang dibaca, dipirsa, atau didengar kesehatan, dan/atau lingkungan sekitar.', 'Menulis berbagai tipe teks sederhana tentang lingkungan sekitar dengan beberapa kalimat sederhana.'],
+                'B': ['Membaca kata-kata baru dari teks nonsastra yang dibaca/dipirsa secara fasih dan benar.', 'Mengidentifikasi ide pokok dari teks aural nonsastra yang didengarkan.', 'Mengidentifikasi informasi dalam teks nonsastra yang dibaca/dipirsa.', 'Menceritakan kembali isi teks yang dibaca, dipirsa, atau didengar secara runtut dan jelas.', 'Menyampaikan pendapat sederhana secara lisan menggunakan kata-kata yang santun.', 'Menyampaikan kembali informasi penting dari teks menggunakan kosakata sendiri secara lisan.', 'Menggunakan volume dan intonasi suara saat berbicara di depan teman sesuai situasi.', 'Menyampaikan pendapat dengan sikap tubuh yang sesuai.', 'Menyusun kalimat sederhana secara tepat menggunakan kaidah kebahasaan dan kosakata baru yang memiliki makna denotatif.', 'Menulis paragraf pendek dengan struktur kalimat yang runtut dan beragam.', 'Menggunakan kosakata baru dengan makna denotatif dalam tulisan sederhana.', 'Membaca teks sastra dengan intonasi dan ekspresi yang sesuai. Menemukan isi dari teks sastra lisan.', 'Mengidentifikasi peristiwa utama dalam teks sastra yang dibaca/dipirsa.', 'Menjelaskan ide pokok dari paragraf dalam teks nonsastra yang dibaca/dipirsa.', 'Mengidentifikasi unsur intrinsik dalam teks sastra yang dibaca/dipirsa.', 'Menjelaskan pesan atau amanat yang disampaikan dalam teks sastra yang dibaca/dipirsa.', 'Menyimpulkan pesan dari teks sastra lisan.', 'Membedakan antara informasi utama dan rincian dari teks nonsastra yang dibacakan dan/atau didengarkan.', 'Menentukan ide pendukung yang memperkuat ide pokok dalam teks nonsastra berbentuk cetak dan/atau elektronik.', 'Menyimpulkan isi teks nonsastra berdasarkan informasi yang dibaca/dipirsa.', 'Menanggapi pendapat teman dengan kalimat yang baik dan sesuai tata cara diskusi sederhana.', 'Memberikan alasan sederhana terhadap pendapat yang disampaikan.', 'Menyampaikan pendapat yang didukung oleh informasi dari teks yang telah dibaca atau didengar.', 'Menulis berbagai tipe teks sederhana sesuai konteks menggunakan kaidah kebahasaan dan kosakata baru yang memiliki makna denotatif.'],
+                'C': ['Membaca kata-kata dengan berbagai pola kombinasi huruf dengan fasih dari bacaan dan/atau tayangan yang dipirsa.', 'Menganalisis informasi dari teks nonsastra berbentuk teks aural (teks yang dibacakan dan/atau didengarkan).', 'Menganalisis informasi nonsastra berwujud teks visual dan/atau audiovisual.', 'Menulis berbagai tipe teks sederhana berdasarkan pengalaman dengan rangkaian kalimat kompleks secara menarik menggunakan kosakata baru yang memiliki makna denotatif.', 'Menyampaikan perasaan berdasarkan fakta (diri sendiri) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.', 'Menganalisis isi teks sastra berbentuk teks aural.', 'Menganalisis informasi dalam teks sastra berwujud teks visual dan/atau audiovisual.', 'Menyampaikan perasaan berdasarkan imajinasi (diri sendiri) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.', 'Menulis berbagai tipe teks sederhana berdasarkan gagasan dengan rangkaian kalimat kompleks secara kreatif.', 'Menganalisis nilai-nilai dalam teks sastra berwujud teks visual dan/atau audiovisual.', 'Menyampaikan perasaan berdasarkan fakta (orang lain) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.', 'Menulis berbagai tipe teks sederhana berdasarkan hasil pengamatan dengan rangkaian kalimat kompleks secara kreatif menggunakan kaidah kebahasaan.', 'Menyampaikan perasaan berdasarkan imajinasi (orang lain) secara indah dan menarik dalam bentuk teks sastra dengan penggunaan kosakata secara kreatif.', 'Mempresentasikan gagasan dari berbagai tipe teks dengan efektif dan santun.', 'Menganalisis nilai-nilai dalam berbagai tipe teks secara mendalam (nonsastra dan sastra, aural dan audiovisual).', 'Menulis berbagai tipe teks sederhana berdasarkan imajinasi dengan rangkaian kalimat kompleks secara indah menggunakan kosakata baru yang memiliki makna konotatif.']
             },
             'Matematika': {
-                'A': [
-                    'Membilang benda, mengenali banyak benda dalam kumpulan tanpa membilang (subitasi), mengenali dan menyatakan kumpulan benda yang sama banyak, lebih banyak atau lebih sedikit.',
-                    'Mengurutkan bilangan maju dan mundur, komposisi dan dekomposisi bilangan sampai 20, dan menentukan nilai tempat sampai 20.',
-                    'Membaca dan menulis bilangan sampai 20 dengan korespondesi satu-satu.',
-                    'Menyelesaikan operasi penjumlahan sampai 20 dengan menggunakan berbagai strategi dan alat bantu benda konkret.',
-                    'Menyelesaikan operasi pengurangan sampai 20 dengan menggunakan berbagai strategi dan alat bantu benda konkret.',
-                    'Memecahkan soal cerita sederhana yang melibatkan penjumlahan dan pengurangan sampai 20.',
-                    'Menuliskan kalimat matematika dan menentukan bilangan yang belum diketahui dari soal cerita sederhana yang berkaitan dengan penjumlahan dan pengurangan dua bilangan sampai dengan 20.',
-                    'Menunjukkan setengah sebagai hasil pembagian sebuah benda atau kumpulan objek menjadi dua bagian sama besar atau sama banyak serta pembagian berulang akan menghasilkan seperempat.',
-                    'Mengurutkan dan mengelompokkan benda dengan pola tertentu serta menjelaskan polanya.',
-                    'Menjelaskan makna simbol "=" pada berbagai bentuk kalimat matematika pada operasi bilangan cacah sampai 20 dengan diagram atau gambar.',
-                    'Mengidentifikasi, mendeskripsikan, dan menyebutkan bentuk-bentuk bangun datar di lingkungan sekitar (segitiga, persegi, persegi panjang, lingkaran).',
-                    'Membandingkan panjang secara langsung dan tidak langsung ukuran benda-benda dalam dengan menggunakan bahasa sehari-hari.',
-                    'Melakukan pengukuran dan menentukan panjang benda dengan satuan tidak baku.',
-                    'Membandingkan berat secara langsung dan tidak langsung benda-benda dengan menggunakan bahasa sehari-hari.',
-                    'Membaca dan menulis bilangan sampai 100.',
-                    'Melakukan komposisi dan dekomposisi bilangan serta menentukan nilai tempat sampai 100.',
-                    'Menyelesaikan operasi penjumlahan sampai 20 dengan menggunakan simbol +, -, =.',
-                    'Menyelesaikan operasi pengurangan sampai 20 dengan menggunakan simbol +, -, =, serta kaitannya dengan bentuk penjumlahan.',
-                    'Menyelesaikan masalah rutin dan non-rutin yang melibatkan penjumlahan dan pengurangan sampai 20.',
-                    'Menyatakan pecahan setengah dan seperempat ke berbagai bentuk representasi gambar dan menuliskannya ke simbol 1/2 dan 1/4.',
-                    'Menggunakan konsep setengah dan seperempat dalam pemecahan masalah sehari-hari.',
-                    'Menyalin, melanjutkan, dan membuat pola dengan gambar, warna, suara atau jenis pola lainnya.',
-                    'Mendeskripsikan dan melanjutkan pola non-bilangan yang dibuat dengan menggunakan atribut (warna, bentuk, ukuran) pada benda.',
-                    'Mengidentifikasi, mendeskripsikan, dan mengelompokkan bangun datar berdasarkan ciri atau sifat tertentu.',
-                    'Menyusun (komposisi) dan menguraikan (dekomposisi) bentuk-bentuk bangun datar untuk membentuk bentuk-bentuk bangun datar lainnya.',
-                    'Mengidentifikasi, mendeskripsikan, dan menyebut bangun ruang di lingkungan sekitar (kubus, balok, kerucut, dan bola).',
-                    'Mengidentifikasi, mendeskripsikan, dan mengklasifikasikan benda benda bangun ruang berdasar ciri atau sifatnya (sisi, simpul, sudut).',
-                    'Menjelaskan posisi suatu objek terhadap objek lainnya (sebelah kanan, kiri, depan, belakang, atas, bawah).',
-                    'Membandingkan durasi waktu dari sebuah kejadian atau aktivitas.',
-                    'Menggunakan petunjuk arah, jarak atau langkah-langkah dari satu lokasi ke lokasi lain untuk mencapai lokasi tujuan secara efektif.',
-                    'Mengurutkan data dari banyak benda yang paling sedikit ke yang paling banyak.',
-                    'Menyortir dan mengelompokkan data dari benda-benda acak menjadi 4 kategori.'
-                ],
-                'B': [
-                    'Menunjukkan pemahaman dan intuisi bilangan (number sense) pada bilangan cacah sampai 10.000.',
-                    'Membaca, menulis, menentukan nilai tempat, membandingkan, mengurutkan, menggunakan nilai tempat, melakukan komposisi dan dekomposisi bilangan cacah sampai 10.000.',
-                    'Melakukan operasi penjumlahan dan pengurangan bilangan cacah sampai 1.000.',
-                    'Mengisi nilai yang belum diketahui dalam sebuah kalimat matematika yang berkaitan dengan penjumlahan dan pengurangan pada bilangan cacah sampai 100.',
-                    'Mengidentifikasi, meniru, dan mengembangkan pola gambar atau objek sederhana dan pola bilangan membesar dan mengecil yang melibatkan penjumlahan dan pengurangan pada bilangan cacah sampai 100.',
-                    'Melakukan operasi perkalian dan pembagian bilangan cacah sampai 100 menggunakan benda-benda konkret, gambar dan simbol matematika.',
-                    'Menyelesaikan masalah berkaitan dengan kelipatan dan faktor.',
-                    'Menyelesaikan masalah berkaitan dengan uang menggunakan ribuan sebagai satuan.',
-                    'Mengenali pecahan senilai menggunakan gambar dan simbol matematika.',
-                    'Membandingkan dan mengurutkan antar-pecahan dengan pembilang satu dan antar-pecahan dengan penyebut yang sama.',
-                    'Menunjukkan pemahaman dan intuisi bilangan (number sense) pada bilangan desimal.',
-                    'Menyatakan pecahan desimal persepuluhan dan perseratusan, serta menghubungkan pecahan desimal perseratusan dengan konsep persen.',
-                    'Mendeskripsikan ciri berbagai bentuk bangun datar (segiempat, segitiga, segi banyak).',
-                    'Menyusun (komposisi) dan menguraikan (dekomposisi) berbagai bangun datar (segiempat, segitiga, segi banyak).',
-                    'Mengukur panjang dan berat benda menggunakan satuan baku.',
-                    'Menentukan hubungan antar-satuan baku panjang (cm, m).',
-                    'Mengukur dan mengestimasi luas dan volume menggunakan satuan tidak baku dan satuan baku berupa bilangan cacah.',
-                    'Mengurutkan, membandingkan, dan menyajikan data dalam bentuk tabel, diagram gambar, piktogram, dan diagram batang (skala satu satuan).',
-                    'Menganalisis dan menginterpretasi data dalam bentuk tabel, diagram gambar, piktogram, dan diagram batang (skala satu satuan).'
-                ],
-                'C': [
-                    'Menunjukan kemampuan membaca, menulis, bilangan cacah sampai 1.000.000.',
-                    'Menentukan nilai tempat, membandingkan, mengurutkan, melakukan komposisi dan dekomposisi bilangan bilangan cacah sampai 1.000.000 menggunakan nilai tempat.',
-                    'Menyelesaikan masalah sehari-hari yang terkait dengan uang.',
-                    'Melakukan operasi penjumlahan, pengurangan, perkalian dan pembagian bilangan cacah 100.000 dengan prosedur yang benar.',
-                    'Menentukan kelipatan dan faktor dari suatu bilangan.',
-                    'Menentukan KPK dan FPB dari 2 dan 3 bilangan.',
-                    'Menyelesaikan permasalahan sehari-hari yang terkait dengan KPK dan FPB.',
-                    'Membandingkan, mengurutkan berbagai pecahan termasuk pecahan campuran.',
-                    'Melakukan operasi penjumlahan dan pengurangan pecahan termasuk pecahan yang berbeda penyebutnya.',
-                    'Melakukan operasi perkalian dan pembagian pecahan dengan bilangan asli dan sebaliknya.',
-                    'Mengubah pecahan menjadi berbagai bentuk pecahan (pecahan campuran, desimal, persen).',
-                    'Membandingkan, mengurutkan bilangan desimal.',
-                    'Memahami sifat-sifat bilangan dan operasi hitung (komutatif, asosiatif, distributif).',
-                    'Menentukan nilai yang belum diketahui dalam kalimat matematika yang melibatkan penjumlahan, pengurangan, perkalian, dan pembagian pada bilangan cacah 1000.',
-                    'Mengidentifikasi, meniru, dan mengembangkan pola bilangan membesar dan mengecil yang melibatkan perkalian dan pembagian.',
-                    'Menentukan bilangan selanjutnya atau sebelumnya dari pola bilangan tertentu yang melibatkan perkalian dan pembagian.',
-                    'Memahami konsep rasio dan menggunakan bahasa rasio untuk menjelaskan hubungan perbandingan antara dua besaran.',
-                    'Menentukan kesamaan rasio dengan menggunakan tabel rasio.',
-                    'Menentukan rasio satuan.',
-                    'Menentukan rasio bagian terhadap bagian dan rasio bagian terhadap keseluruhan.',
-                    'Menyelesaikan masalah sehari-hari dengan rasio.',
-                    'Menggunakan operasi perkalian dan pembagian dalam menyelesaikan masalah sehari-hari yang terkait dengan proporsi.',
-                    'Menentukan keliling dan luas berbagai bentuk bangun datar (segitiga, segiempat, dan segi banyak) serta gabungannya.',
-                    'Memahami konsep durasi waktu.',
-                    'Menjelaskan, membaca gerakan jarum jam.',
-                    'Mengubah satuan waktu (detik, menit, jam, hari, bulan, windu, dan lain-lain).',
-                    'Menyelesaikan masalah sehari-hari yang terkait dengan durasi waktu.',
-                    'Memahami konsep besar sudut.',
-                    'Mengidentifikasi, menunjukan, menggambar jenis-jenis sudut.',
-                    'Mengukur besar sudut menggunakan penggaris busur.',
-                    'Menentukan sudut yang belum diketahui pada bangun datar.',
-                    'Mengonstruksi dan mengurai bangun ruang (kubus, balok, dan gabungannya).',
-                    'Mengenali, menggambarkan visualisasi spasial (bagian depan, atas, dan samping).',
-                    'Membandingkan karakteristik antar bangun datar dan antar bangun bangun ruang.',
-                    'Menentukan lokasi pada peta menggunakan sistem berpetak.',
-                    'Mengurutkan, membandingkan, menyajikan, dan menganalisis data banyak benda dan data hasil pengukuran dalam bentuk gambar, piktogram, diagram batang, dan tabel frekuensi untuk mendapatkan informasi.',
-                    'Menentukan, menggambar skala kemungkinan (tidak mungkin, kurang mungkin, mungkin, sangat mungkin, pasti).',
-                    'Menentukan kejadian dengan kemungkinan yang lebih besar dalam suatu percobaan acak.'
-                ]
+                'A': ['Membilang benda, mengenali banyak benda dalam kumpulan tanpa membilang (subitasi), mengenali dan menyatakan kumpulan benda yang sama banyak, lebih banyak atau lebih sedikit.', 'Mengurutkan bilangan maju dan mundur, komposisi dan dekomposisi bilangan sampai 20, dan menentukan nilai tempat sampai 20.', 'Membaca dan menulis bilangan sampai 20 dengan korespondesi satu-satu.', 'Menyelesaikan operasi penjumlahan sampai 20 dengan menggunakan berbagai strategi dan alat bantu benda konkret.', 'Menyelesaikan operasi pengurangan sampai 20 dengan menggunakan berbagai strategi dan alat bantu benda konkret.', 'Memecahkan soal cerita sederhana yang melibatkan penjumlahan dan pengurangan sampai 20.', 'Menuliskan kalimat matematika dan menentukan bilangan yang belum diketahui dari soal cerita sederhana yang berkaitan dengan penjumlahan dan pengurangan dua bilangan sampai dengan 20.', 'Menunjukkan setengah sebagai hasil pembagian sebuah benda atau kumpulan objek menjadi dua bagian sama besar atau sama banyak serta pembagian berulang akan menghasilkan seperempat.', 'Mengurutkan dan mengelompokkan benda dengan pola tertentu serta menjelaskan polanya.', 'Menjelaskan makna simbol "=" pada berbagai bentuk kalimat matematika pada operasi bilangan cacah sampai 20 dengan diagram atau gambar.', 'Mengidentifikasi, mendeskripsikan, dan menyebutkan bentuk-bentuk bangun datar di lingkungan sekitar (segitiga, persegi, persegi panjang, lingkaran).', 'Membandingkan panjang secara langsung dan tidak langsung ukuran benda-benda dalam dengan menggunakan bahasa sehari-hari.', 'Melakukan pengukuran dan menentukan panjang benda dengan satuan tidak baku.', 'Membandingkan berat secara langsung dan tidak langsung benda-benda dengan menggunakan bahasa sehari-hari.', 'Membaca dan menulis bilangan sampai 100.', 'Melakukan komposisi dan dekomposisi bilangan serta menentukan nilai tempat sampai 100.', 'Menyelesaikan operasi penjumlahan sampai 20 dengan menggunakan simbol +, -, =.', 'Menyelesaikan operasi pengurangan sampai 20 dengan menggunakan simbol +, -, =, serta kaitannya dengan bentuk penjumlahan.', 'Menyelesaikan masalah rutin dan non-rutin yang melibatkan penjumlahan dan pengurangan sampai 20.', 'Menyatakan pecahan setengah dan seperempat ke berbagai bentuk representasi gambar dan menuliskannya ke simbol 1/2 dan 1/4.', 'Menggunakan konsep setengah dan seperempat dalam pemecahan masalah sehari-hari.', 'Menyalin, melanjutkan, dan membuat pola dengan gambar, warna, suara atau jenis pola lainnya.', 'Mendeskripsikan dan melanjutkan pola non-bilangan yang dibuat dengan menggunakan atribut (warna, bentuk, ukuran) pada benda.', 'Mengidentifikasi, mendeskripsikan, dan mengelompokkan bangun datar berdasarkan ciri atau sifat tertentu.', 'Menyusun (komposisi) dan menguraikan (dekomposisi) bentuk-bentuk bangun datar untuk membentuk bentuk-bentuk bangun datar lainnya.', 'Mengidentifikasi, mendeskripsikan, dan menyebut bangun ruang di lingkungan sekitar (kubus, balok, kerucut, dan bola).', 'Mengidentifikasi, mendeskripsikan, dan mengklasifikasikan benda benda bangun ruang berdasar ciri atau sifatnya (sisi, simpul, sudut).', 'Menjelaskan posisi suatu objek terhadap objek lainnya (sebelah kanan, kiri, depan, belakang, atas, bawah).', 'Membanding durasi waktu dari sebuah kejadian atau aktivitas.', 'Menggunakan petunjuk arah, jarak atau langkah-langkah dari satu lokasi ke lokasi lain untuk mencapai lokasi tujuan secara efektif.', 'Mengurutkan data dari banyak benda yang paling sedikit ke yang paling banyak.', 'Menyortir dan mengelompokkan data dari benda-benda acak menjadi 4 kategori.'],
+                'B': ['Menunjukkan pemahaman dan intuisi bilangan (number sense) pada bilangan cacah sampai 10.000.', 'Membaca, menulis, menentukan nilai tempat, membandingkan, mengurutkan, menggunakan nilai tempat, melakukan komposisi dan dekomposisi bilangan cacah sampai 10.000.', 'Melakukan operasi penjumlahan dan pengurangan bilangan cacah sampai 1.000.', 'Mengisi nilai yang belum diketahui dalam sebuah kalimat matematika yang berkaitan dengan penjumlahan dan pengurangan pada bilangan cacah sampai 100.', 'Mengidentifikasi, meniru, dan mengembangkan pola gambar atau objek sederhana dan pola bilangan membesar dan mengecil yang melibatkan penjumlahan dan pengurangan pada bilangan cacah sampai 100.', 'Melakukan operasi perkalian dan pembagian bilangan cacah sampai 100 menggunakan benda-benda konkret, gambar dan simbol matematika.', 'Menyelesaikan masalah berkaitan dengan kelipatan dan faktor.', 'Menyelesaikan masalah berkaitan dengan uang menggunakan ribuan sebagai satuan.', 'Mengenali pecahan senilai menggunakan gambar dan simbol matematika.', 'Membandingkan dan mengurutkan antar-pecahan dengan pembilang satu dan antar-pecahan dengan penyebut yang sama.', 'Menunjukkan pemahaman dan intuisi bilangan (number sense) pada bilangan desimal.', 'Menyatakan pecahan desimal persepuluhan dan perseratusan, serta menghubungkan pecahan desimal perseratusan dengan konsep persen.', 'Mendeskripsikan ciri berbagai bentuk bangun datar (segiempat, segitiga, segi banyak).', 'Menyusun (komposisi) dan menguraikan (dekomposisi) berbagai bangun datar (segiempat, segitiga, segi banyak).', 'Mengukur panjang dan berat benda menggunakan satuan baku.', 'Menentukan hubungan antar-satuan baku panjang (cm, m).', 'Mengukur dan mengestimasi luas dan volume menggunakan satuan tidak baku dan satuan baku berupa bilangan cacah.', 'Mengurutkan, membandingkan, dan menyajikan data dalam bentuk tabel, diagram gambar, piktogram, dan diagram batang (skala satu satuan).', 'Menganalisis dan menginterpretasi data dalam bentuk tabel, diagram gambar, piktogram, dan diagram batang (skala satu satuan).'],
+                'C': ['Menunjukan kemampuan membaca, menulis, bilangan cacah sampai 1.000.000.', 'Menentukan nilai tempat, membandingkan, mengurutkan, melakukan komposisi dan dekomposisi bilangan bilangan cacah sampai 1.000.000 menggunakan nilai tempat.', 'Menyelesaikan masalah sehari-hari yang terkait dengan uang.', 'Melakukan operasi penjumlahan, pengurangan, perkalian dan pembagian bilangan cacah 100.000 dengan prosedur yang benar.', 'Menentukan kelipatan dan faktor dari suatu bilangan.', 'Menentukan KPK dan FPB dari 2 dan 3 bilangan.', 'Menyelesaikan permasalahan sehari-hari yang terkait dengan KPK dan FPB.', 'Membandingkan, mengurutkan berbagai pecahan termasuk pecahan campuran.', 'Melakukan operasi penjumlahan dan pengurangan pecahan termasuk pecahan yang berbeda penyebutnya.', 'Melakukan operasi perkalian dan pembagian pecahan dengan bilangan asli dan sebaliknya.', 'Mengubah pecahan menjadi berbagai bentuk pecahan (pecahan campuran, desimal, persen).', 'Membandingkan, mengurutkan bilangan desimal.', 'Memahami sifat-sifat bilangan dan operasi hitung (komutatif, asosiatif, distributif).', 'Menentukan nilai yang belum diketahui dalam kalimat matematika yang melibatkan penjumlahan, pengurangan, perkalian, dan pembagian pada bilangan cacah 1000.', 'Mengidentifikasi, meniru, dan mengembangkan pola bilangan membesar dan mengecil yang melibatkan perkalian dan pembagian.', 'Menentukan bilangan selanjutnya atau sebelumnya dari pola bilangan tertentu yang melibatkan perkalian dan pembagian.', 'Memahami konsep rasio dan menggunakan bahasa rasio untuk menjelaskan hubungan perbandingan antara dua besaran.', 'Menentukan kesamaan rasio dengan menggunakan tabel rasio.', 'Menentukan rasio satuan.', 'Menentukan rasio bagian terhadap bagian dan rasio bagian terhadap keseluruhan.', 'Menyelesaikan masalah sehari-hari dengan rasio.', 'Menggunakan operasi perkalian dan pembagian dalam menyelesaikan masalah sehari-hari yang terkait dengan proporsi.', 'Menentukan keliling dan luas berbagai bentuk bangun datar (segitiga, segiempat, dan segi banyak) serta gabungannya.', 'Memahami konsep durasi waktu.', 'Menjelaskan, membaca gerakan jarum jam.', 'Mengubah satuan waktu (detik, menit, jam, hari, bulan, windu, dan lain-lain).', 'Menyelesaikan masalah sehari-hari yang terkait dengan durasi waktu.', 'Memahami konsep besar sudut.', 'Mengidentifikasi, menunjukan, menggambar jenis-jenis sudut.', 'Mengukur besar sudut menggunakan penggaris busur.', 'Menentukan sudut yang belum diketahui pada bangun datar.', 'Mengonstruksi dan mengurai bangun ruang (kubus, balok, dan gabungannya).', 'Mengenali, menggambarkan visualisasi spasial (bagian depan, atas, dan samping).', 'Membandingkan karakteristik antar bangun datar dan antar bangun bangun ruang.', 'Menentukan lokasi pada peta menggunakan sistem berpetak.', 'Mengurutkan, membandingkan, menyajikan, dan menganalisis data banyak benda dan data hasil pengukuran dalam bentuk gambar, piktogram, diagram batang, dan tabel frekuensi untuk mendapatkan informasi.', 'Menentukan, menggambar skala kemungkinan (tidak mungkin, kurang mungkin, mungkin, sangat mungkin, pasti).', 'Menentukan kejadian dengan kemungkinan yang lebih besar dalam suatu percobaan acak.']
             },
             'IPAS': {
-                'B': [
-                    'Menjelaskan bentuk dan fungsi pancaindra.',
-                    'Menganalisis siklus hidup makhluk hidup dan upaya pelestariannya.',
-                    'Menjelaskan peran, tugas, dan tanggung jawab serta interaksi sosial yang terjadi di sekitar tempat tinggal dan sekolah.',
-                    'Menjelaskan sumber dan bentuk energi, serta proses perubahan bentuk energi dalam kehidupan sehari-hari.',
-                    'Menganalisis sejarah masyarakat di lingkungan tempat tinggal.',
-                    'Menjelaskan nilai mata uang dan fungsinya, serta cara mengelola keuangan secara bijak.',
-                    'Mengenali letak kabupaten dan provinsi tempat tinggalnya dengan menggunakan peta konvensional/digital.',
-                    'Menyimpulkan proses perubahan wujud zat.',
-                    'Membedakan jenis gaya dan pengaruhnya terhadap arah, gerak, dan bentuk benda.',
-                    'Mengklasifikasikan ragam bentang alam dan keterkaitannya dengan profesi masyarakat, ragam budaya serta upaya untuk melestarikannya.',
-                    'Menghasilkan solusi untuk masalah yang berkaitan dengan pelestarian sumber daya alam sebagai upaya mitigasi perubahan iklim.'
-                ],
-                'C': [
-                    'Merefleksikan sistem organ tubuh manusia yang dikaitkan dengan cara menjaga kesehatan organ tubuhnya dalam kehidupan sehari-hari.',
-                    'Menganalisis hubungan antar komponen biotik dan abiotik, serta pengaruhnya terhadap ekosistem.',
-                    'Menjelaskan fenomena gelombang bunyi dan cahaya dalam kehidupan sehari-hari.',
-                    'Menjelaskan letak dan kondisi geografis negara Indonesia dengan menggunakan peta konvensional/digital.',
-                    'Meninjau sejarah perjuangan para pahlawan di lingkungan sekitar tempat tinggalnya.',
-                    'Menemukan keragaman budaya nasional dalam konteks kebhinekaan berdasarkan pemahaman terhadap nilai-nilai kearifan lokal yang berlaku di wilayah tempat tinggal.',
-                    'Menghasilkan upaya penghematan energi, serta pemanfaatan sumber energi alternatif dari sumber daya yang ada di sekitarnya sebagai upaya mitigasi perubahan iklim.',
-                    'Menerapkan kegiatan ekonomi masyarakat di lingkungan sekitar.',
-                    'Menjelaskan sistem tata surya, serta kaitannya dengan rotasi dan revolusi bumi.'
-                ]
+                'B': ['Menjelaskan bentuk dan fungsi pancaindra.', 'Menganalisis siklus hidup makhluk hidup dan upaya pelestariannya.', 'Menjelaskan peran, tugas, dan tanggung jawab serta interaksi sosial yang terjadi di sekitar tempat tinggal dan sekolah.', 'Menjelaskan sumber dan bentuk energi, serta proses perubahan bentuk energi dalam kehidupan sehari-hari.', 'Menganalisis sejarah masyarakat di lingkungan tempat tinggal.', 'Menjelaskan nilai mata uang dan fungsinya, serta cara mengelola keuangan secara bijak.', 'Mengenali letak kabupaten dan provinsi tempat tinggalnya dengan menggunakan peta konvensional/digital.', 'Menyimpulkan proses perubahan wujud zat.', 'Membedakan jenis gaya dan pengaruhnya terhadap arah, gerak, dan bentuk benda.', 'Mengklasifikasikan ragam bentang alam dan keterkaitannya dengan profesi masyarakat, ragam budaya serta upaya untuk melestarikannya.', 'Menghasilkan solusi untuk masalah yang berkaitan dengan pelestarian sumber daya alam sebagai upaya mitigasi perubahan iklim.'],
+                'C': ['Merefleksikan sistem organ tubuh manusia yang dikaitkan dengan cara menjaga kesehatan organ tubuhnya dalam kehidupan sehari-hari.', 'Menganalisis hubungan antar komponen biotik dan abiotik, serta pengaruhnya terhadap ekosistem.', 'Menjelaskan fenomena gelombang bunyi dan cahaya dalam kehidupan sehari-hari.', 'Menjelaskan letak dan kondisi geografis negara Indonesia dengan menggunakan peta konvensional/digital.', 'Meninjau sejarah perjuangan para pahlawan di lingkungan sekitar tempat tinggalnya.', 'Menemukan keragaman budaya nasional dalam konteks kebhinekaan berdasarkan pemahaman terhadap nilai-nilai kearifan lokal yang berlaku di wilayah tempat tinggal.', 'Menghasilkan upaya penghematan energi, serta pemanfaatan sumber energi alternatif dari sumber daya yang ada di sekitarnya sebagai upaya mitigasi perubahan iklim.', 'Menerapkan kegiatan ekonomi masyarakat di lingkungan sekitar.', 'Menjelaskan sistem tata surya, serta kaitannya dengan rotasi dan revolusi bumi.']
             },
             'Bahasa Inggris': {
-                'B': [
-                    'Mengidentifikasi informasi pada teks lisan atau multimodal sederhana tentang kehidupan sehari-hari.',
-                    'Merespon teks lisan atau teks multimodal sederhana tentang kehidupan sehari-hari baik secara verbal maupun non verbal.',
-                    'Mengidentifikasi informasi dalam teks tulis atau teks multimodal sederhana tentang topik sehari-hari.',
-                    'Mengomunikasikan gagasan tentang topik sehari-hari dalam teks tulis pendek.',
-                    'Mengungkapkan gagasan secara lisan atau multimodal sederhana tentang kehidupan sehari-hari.',
-                    'Merespon informasi dalam teks tulis atau multimodal sederhana tentang topik sehari-hari secara verbal atau non verbal.',
-                    'Mengomunikasikan gagasan tentang topik sehari-hari dalam teks multimodal.'
-                ],
-                'C': [
-                    'Mengidentifikasi informasi tersurat dan tersirat dari berbagai jenis teks lisan tentang topik sehari-hari dan sesuai dengan minat.',
-                    'Merespon teks multimodal tentang topik sehari-hari dan sesuai dengan minat.',
-                    'Mengidentifikasi informasi tersurat dan tersirat dari berbagai jenis teks tertulis tentang topik sehari-hari dan sesuai dengan minat.',
-                    'Mengungkapkan gagasan dalam berbagai jenis teks secara tertulis tentang topik sehari-hari dan sesuai dengan minat dengan mulai menggunakan kalimat sederhana dan majemuk dengan struktur teks dan unsur kebahasaan yang tepat.',
-                    'Mengungkapkan gagasan dalam berbagai jenis teks secara lisan tentang topik yang dibahas menggunakan kalimat sederhana dan majemuk secara formal maupun informal.',
-                    'Mengidentifikasi alur informasi, informasi tersurat dan tersirat dari berbagai jenis teks tertulis atau teks multimodal tentang topik yang diminati.',
-                    'Merespon berbagai jenis teks tertulis tentang topik sehari-hari dan sesuai dengan minat.',
-                    'Mengungkapkan pengalaman dalam berbagai jenis teks secara tertulis tentang topik sehari-hari dan sesuai dengan minat.',
-                    'Mengungkapkan pendapat tentang suatu isu terkait kehidupan sehari-hari dan yang sesuai dengan minat.',
-                    'Mengungkapkan pengalaman dalam berbagai jenis teks secara lisan tentang topik yang dibahas.',
-                    'Merespon teks multimodal tentang topik sehari-hari dan sesuai dengan minat.',
-                    'Mengomunikasikan gagasan dan pengalaman dalam teks multimodal tentang topik sehari-hari dan sesuai dengan minat.',
-                    'Memertahankan pendapat tentang suatu isu terkait kehidupan sehari-hari dan yang sesuai dengan minat.'
-                ]
+                'B': ['Mengidentifikasi informasi pada teks lisan atau multimodal sederhana tentang kehidupan sehari-hari.', 'Merespon teks lisan atau teks multimodal sederhana tentang kehidupan sehari-hari baik secara verbal maupun non verbal.', 'Mengidentifikasi informasi dalam teks tulis atau teks multimodal sederhana tentang topik sehari-hari.', 'Mengomunikasikan gagasan tentang topik sehari-hari dalam teks tulis pendek.', 'Mengungkapkan gagasan secara lisan atau multimodal sederhana tentang kehidupan sehari-hari.', 'Merespon informasi dalam teks tulis atau multimodal sederhana tentang topik sehari-hari secara verbal atau non verbal.', 'Mengomunikasikan gagasan tentang topik sehari-hari dalam teks multimodal.'],
+                'C': ['Mengidentifikasi informasi tersurat dan tersirat dari berbagai jenis teks lisan tentang topik sehari-hari dan sesuai dengan minat.', 'Merespon teks multimodal tentang topik sehari-hari dan sesuai dengan minat.', 'Mengidentifikasi informasi tersurat dan tersirat dari berbagai jenis teks tertulis tentang topik sehari-hari dan sesuai dengan minat.', 'Mengungkapkan gagasan dalam berbagai jenis teks secara tertulis tentang topik sehari-hari dan sesuai dengan minat dengan mulai menggunakan kalimat sederhana dan majemuk dengan struktur teks dan unsur kebahasaan yang tepat.', 'Mengungkapkan gagasan dalam berbagai jenis teks secara lisan tentang topik yang dibahas menggunakan kalimat sederhana dan majemuk secara formal maupun informal.', 'Mengidentifikasi alur informasi, informasi tersurat dan tersirat dari berbagai jenis teks tertulis atau teks multimodal tentang topik yang diminati.', 'Merespon berbagai jenis teks tertulis tentang topik sehari-hari dan sesuai dengan minat.', 'Mengungkapkan pengalaman dalam berbagai jenis teks secara tertulis tentang topik sehari-hari dan sesuai dengan minat.', 'Mengungkapkan pendapat tentang suatu isu terkait kehidupan sehari-hari dan yang sesuai dengan minat.', 'Mengungkapkan pengalaman dalam berbagai jenis teks secara lisan tentang topik yang dibahas.', 'Merespon teks multimodal tentang topik sehari-hari dan sesuai dengan minat.', 'Mengomunikasikan gagasan dan pengalaman dalam teks multimodal tentang topik sehari-hari dan sesuai dengan minat.', 'Memertahankan pendapat tentang suatu isu terkait kehidupan sehari-hari dan yang sesuai dengan minat.']
             },
             'Seni Musik': {
-                'A': [
-                    'Membedakan bunyi bernada dan tidak bernada.',
-                    'Mengenal tempo lambat dan cepat dalam lagu.',
-                    'Menyanyikan lagu anak-anak dengan ritme yang benar.',
-                    'Mengeksplorasi sumber bunyi dari benda di sekitar.'
-                ],
-                'B': [
-                    'Menyanyikan lagu daerah dengan intonasi yang tepat.',
-                    'Mengenal alat musik ritmis dan melodis sederhana.',
-                    'Mempraktikkan dinamika keras dan lembut dalam bernyanyi.',
-                    'Mengenal dan mempraktikkan pola irama sederhana.'
-                ],
-                'C': [
-                    'Membaca notasi angka sederhana.',
-                    'Bermain alat musik pianika/rekorder dalam ansambel.',
-                    'Menggubah pola ritme sederhana.',
-                    'Mengapresiasi ragam musik tradisional Indonesia.'
-                ]
+                'A': ['Membedakan bunyi bernada dan tidak bernada.', 'Mengenal tempo lambat dan cepat dalam lagu.', 'Menyanyikan lagu anak-anak dengan ritme yang benar.', 'Mengeksplorasi sumber bunyi dari benda di sekitar.'],
+                'B': ['Menyanyikan lagu daerah dengan intonasi yang tepat.', 'Mengenal alat musik ritmis dan melodis sederhana.', 'Mempraktikkan dinamika keras dan lembut dalam bernyanyi.', 'Mengenal dan mempraktikkan pola irama sederhana.'],
+                'C': ['Membaca notasi angka sederhana.', 'Bermain alat musik pianika/rekorder dalam ansambel.', 'Menggubah pola ritme sederhana.', 'Mengapresiasi ragam musik tradisional Indonesia.']
             },
             'Seni Rupa': {
-                'A': [
-                    'Mengenal dan mengeksplorasi elemen rupa (garis, bentuk, warna).',
-                    'Membuat karya seni dari bentuk geometris dasar.',
-                    'Mengeksplorasi warna primer dan sekunder.',
-                    'Mengenal tekstur melalui teknik sederhana.'
-                ],
-                'B': [
-                    'Membuat karya seni dua dimensi dengan komposisi warna.',
-                    'Mengenal dan mempraktikkan teknik cetak dan kolase.',
-                    'Mengidentifikasi fokus dan kesatuan dalam karya rupa.',
-                    'Menggunakan gunting dan perekat secara aman dan tepat.'
-                ],
-                'C': [
-                    'Menggambar menggunakan perspektif dan pencahayaan.',
-                    'Mengapresiasi karya seni rupa lokal/Nusantara.',
-                    'Menciptakan karya rupa yang mencerminkan identitas budaya.',
-                    'Mempraktikkan teknik anyaman atau kriya tekstil sederhana.'
-                ]
+                'A': ['Mengenal dan mengeksplorasi elemen rupa (garis, bentuk, warna).', 'Membuat karya seni dari bentuk geometris dasar.', 'Mengeksplorasi warna primer dan sekunder.', 'Mengenal tekstur melalui teknik sederhana.'],
+                'B': ['Membuat karya seni dua dimensi dengan komposisi warna.', 'Mengenal dan mempraktikkan teknik cetak dan kolase.', 'Mengidentifikasi fokus dan kesatuan dalam karya rupa.', 'Menggunakan gunting dan perekat secara aman dan tepat.'],
+                'C': ['Menggambar menggunakan perspektif dan pencahayaan.', 'Mengapresiasi karya seni rupa lokal/Nusantara.', 'Menciptakan karya rupa yang mencerminkan identitas budaya.', 'Mempraktikkan teknik anyaman atau kriya tekstil sederhana.']
             },
             'Seni Tari': {
-                'A': [
-                    'Menirukan gerak alam (hewan/tumbuhan).',
-                    'Menari dengan mengikuti ritme lagu.',
-                    'Mengeksplorasi gerak tubuh berdasarkan tempo.',
-                    'Menampilkan gerak tari sederhana di depan teman.'
-                ],
-                'B': [
-                    'Memahami ruang, waktu, dan tenaga dalam gerak tari.',
-                    'Mengenal properti tari tradisional.',
-                    'Mempraktikkan gerak tari daerah sederhana.',
-                    'Menjelaskan fungsi tari di lingkungan sekitar.'
-                ],
-                'C': [
-                    'Menciptakan komposisi tari kelompok sederhana.',
-                    'Mengapresiasi makna ragam gerak tari daerah.',
-                    'Menerapkan tata rias dan busana tari sederhana.',
-                    'Mementaskan karya tari hasil kreasi kelompok.'
-                ]
+                'A': ['Menirukan gerak alam (hewan/tumbuhan).', 'Menari dengan mengikuti ritme lagu.', 'Mengeksplorasi gerak tubuh berdasarkan tempo.', 'Menampilkan gerak tari sederhana di depan teman.'],
+                'B': ['Memahami ruang, waktu, dan tenaga dalam gerak tari.', 'Mengenal properti tari tradisional.', 'Mempraktikkan gerak tari daerah sederhana.', 'Menjelaskan fungsi tari di lingkungan sekitar.'],
+                'C': ['Menciptakan komposisi tari kelompok sederhana.', 'Mengapresiasi makna ragam gerak tari daerah.', 'Menerapkan tata rias dan busana tari sederhana.', 'Mementaskan karya tari hasil kreasi kelompok.']
             },
             'Seni Teater': {
-                'A': [
-                    'Mengekspresikan emosi melalui mimik wajah.',
-                    'Bermain peran tokoh fabel (hewan).',
-                    'Menirukan suara dan gerak benda di sekitar.',
-                    'Berani tampil dalam permainan peran singkat.'
-                ],
-                'B': [
-                    'Melakukan olah vokal dan artikulasi yang jelas.',
-                    'Mementaskan cerita rakyat pendek secara berkelompok.',
-                    'Mengidentifikasi konflik sederhana dalam cerita.',
-                    'Menghargai penampilan teater teman sejawat.'
-                ],
-                'C': [
-                    'Menyusun naskah lakon sederhana.',
-                    'Merancang tata panggung dan properti untuk pertunjukan.',
-                    'Menganalisis karakter tokoh dalam pementasan.',
-                    'Melakukan improvisasi adegan berdasarkan situasi.'
-                ]
+                'A': ['Mengekspresikan emosi melalui mimik wajah.', 'Bermain peran tokoh fabel (hewan).', 'Menirukan suara dan gerak benda di sekitar.', 'Berani tampil dalam permainan peran singkat.'],
+                'B': ['Melakukan olah vokal dan artikulasi yang jelas.', 'Mementaskan cerita rakyat pendek secara berkelompok.', 'Mengidentifikasi konflik sederhana dalam cerita.', 'Menghargai penampilan teater teman sejawat.'],
+                'C': ['Menyusun naskah lakon sederhana.', 'Merancang tata panggung dan properti untuk pertunjukan.', 'Menganalisis karakter tokoh dalam pementasan.', 'Melakukan improvisasi adegan berdasarkan situasi.']
             },
             'Koding & AI': {
-                'C': [
-                    'Menerapkan pengelolaan data dengan memanipulasi, dan menganalisis data.',
-                    'Menerapkan pemecahan masalah dengan langkah-langkah algoritmik.',
-                    'Menuliskan instruksi yang lebih kompleks.',
-                    'Menerapkan produksi konten digital dalam bentuk audio dan video.',
-                    'Menerapkan diseminasi konten digital dalam bentuk audio dan video.',
-                    'Menerapkan kolaborasi dalam memproduksi dan mendiseminasi konten digital.',
-                    'Memahami perbedaan cara manusia dan Kecerdasan Artifisial dalam menyelesaikan masalah.',
-                    'Memahami manfaat dan dampak Kecerdasan Artifisial pada kehidupan masyarakat.',
-                    'Mengevaluasi kualitas data.',
-                    'Memahami perangkat Kecerdasan Artifisial pada platform tertentu.',
-                    'Menerapkan eksperimen yang memanfaatkan Kecerdasan Artifisial.',
-                    'Menerapkan pengumpulan dan pengolahan data melalui Kecerdasan Artifisial.',
-                    'Menerapkan proses identifikasi masalah menggunakan Kecerdasan Artifisial.',
-                    'Memahami pengaruh data input terhadap hasil klasifikasi Kecerdasan Artifisial.',
-                    'Menerapkan algoritma sederhana.',
-                    'Menerapkan representasi simbol dalam Instruksi.',
-                    'Melakukan eksperimen dengan instruksi logis.',
-                    'Menerapkan internet secara aman dan produktif.',
-                    'Memahami dampak teknologi digital.',
-                    'Menerapkan produksi konten digital dalam bentuk teks dan gambar.',
-                    'Menerapkan diseminasi konten digital dalam bentuk teks dan gambar.',
-                    'Memahami cara kerja Kecerdasan Artifisial secara sederhana.',
-                    'Memahami etika penggunaan Kecerdasan Artifisial dalam kehidupan sehari-hari.',
-                    'Menerapkan pemanfaatan Kecerdasan Artifisial untuk membuat karya.'
-                ]
+                'C': ['Menerapkan pengelolaan data dengan memanipulasi, dan menganalisis data.', 'Menerapkan pemecahan masalah dengan langkah-langkah algoritmik.', 'Menuliskan instruksi yang lebih kompleks.', 'Menerapkan produksi konten digital dalam bentuk audio dan video.', 'Menerapkan diseminasi konten digital dalam bentuk audio dan video.', 'Menerapkan kolaborasi dalam memproduksi dan mendiseminasi konten digital.', 'Memahami perbedaan cara manusia dan Kecerdasan Artifisial dalam menyelesaikan masalah.', 'Memahami manfaat dan dampak Kecerdasan Artifisial pada kehidupan masyarakat.', 'Mengevaluasi kualitas data.', 'Memahami perangkat Kecerdasan Artifisial pada platform tertentu.', 'Menerapkan eksperimen yang memanfaatkan Kecerdasan Artifisial.', 'Menerapkan pengumpulan dan pengolahan data melalui Kecerdasan Artifisial.', 'Menerapkan proses identifikasi masalah menggunakan Kecerdasan Artifisial.', 'Memahami pengaruh data input terhadap hasil klasifikasi Kecerdasan Artifisial.', 'Menerapkan algoritma sederhana.', 'Menerapkan representasi simbol dalam Instruksi.', 'Melakukan eksperimen dengan instruksi logis.', 'Menerapkan internet secara aman dan produktif.', 'Memahami dampak teknologi digital.', 'Menerapkan produksi konten digital dalam bentuk teks dan gambar.', 'Menerapkan diseminasi konten digital dalam bentuk teks dan gambar.', 'Memahami cara kerja Kecerdasan Artifisial secara sederhana.', 'Memahami etika penggunaan Kecerdasan Artifisial dalam kehidupan sehari-hari.', 'Menerapkan pemanfaatan Kecerdasan Artifisial untuk membuat karya.']
             },
             'PJOK': {
-                'A': [
-                    'Mempraktikkan gerak dasar lokomotor (jalan, lari, lompat).',
-                    'Mengenal kebersihan diri dan lingkungan.',
-                    'Mempraktikkan permainan tradisional sederhana.'
-                ],
-                'B': [
-                    'Variasi dan kombinasi gerak dasar atletik.',
-                    'Memahami konsep pola hidup sehat.',
-                    'Mempraktikkan senam lantai sederhana.'
-                ],
-                'C': [
-                    'Menerapkan taktik dan strategi dalam permainan beregu.',
-                    'Memahami perkembangan fisik masa pubertas.',
-                    'Mempraktikkan penyelamatan di air.'
-                ]
+                'A': ['Mempraktikkan gerak dasar lokomotor (jalan, lari, lompat).', 'Mengenal kebersihan diri dan lingkungan.', 'Mempraktikkan permainan tradisional sederhana.'],
+                'B': ['Variasi dan kombinasi gerak dasar atletik.', 'Memahami konsep pola hidup sehat.', 'Mempraktikkan senam lantai sederhana.'],
+                'C': ['Menerapkan taktik dan strategi dalam permainan beregu.', 'Memahami perkembangan fisik masa pubertas.', 'Mempraktikkan penyelamatan di air.']
             }
         };
 
@@ -657,7 +294,6 @@
             document.body.removeChild(textArea);
         };
 
-        // Exponential backoff logic for robust API calls
         async function fetchWithRetry(url, options, maxRetries = 5) {
             const delays = [1000, 2000, 4000, 8000, 16000];
             for (let i = 0; i < maxRetries; i++) {
@@ -675,7 +311,12 @@
         }
 
         window.generateSoal = async (e) => {
-            if (e) e.preventDefault(); // Mencegah form reload halaman
+            if (e) e.preventDefault();
+
+            if (!APPS_SCRIPT_URL || APPS_SCRIPT_URL.includes("MASUKKAN_URL")) {
+                alert("Perhatian: Anda belum memasukkan URL Google Apps Script di dalam kode HTML. Fitur ini tidak akan berjalan tanpa backend.");
+                return;
+            }
 
             let finalTP = state.mode === 'Kurmer' ? (state.tujuanPembelajaran === 'Lainnya' ? state.customTP : state.tujuanPembelajaran) : "";
             if (state.mode === 'Kurmer' && !finalTP.trim()) {
@@ -687,9 +328,6 @@
             state.result = null;
             state.error = '';
             render();
-
-            const apiKey = "AIzaSyAx5CgB-ZXzXkkf5kRC5Xvc-ceRH-kyaDw"; // Disuntikkan lingkungan
-            const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
             let isHOTS = false;
             let taksonomiTerpilih = state.mode === 'Kurmer' ? state.taksonomi : state.kognitifTKA;
@@ -759,38 +397,14 @@
             }
 
             try {
-                const payload = {
-                    contents: [{ parts: [{ text: prompt }] }],
-                    systemInstruction: { parts: [{ text: "Respon harus format JSON murni. WAJIB mengisi properti 'indikator_soal_otomatis'. Gunakan bahasa Indonesia yang modern dan ramah murid SD." }] },
-                    generationConfig: {
-                        responseMimeType: "application/json",
-                        responseSchema: {
-                            type: "OBJECT",
-                            properties: {
-                                indikator_soal_otomatis: { type: "STRING" },
-                                stimulus: { type: "STRING" },
-                                pertanyaan: { type: "STRING" },
-                                opsi_jawaban: { type: "ARRAY", items: { type: "STRING" } },
-                                kunci_jawaban: { type: "STRING" },
-                                pembahasan: { type: "STRING" }
-                            },
-                            required: ["indikator_soal_otomatis", "stimulus", "pertanyaan", "opsi_jawaban", "kunci_jawaban", "pembahasan"]
-                        }
-                    }
-                };
-
-                const data = await fetchWithRetry(endpoint, {
+                const data = await fetchWithRetry(APPS_SCRIPT_URL, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                    body: JSON.stringify({ prompt: prompt })
                 });
                 
-                const resText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-                
-                if (resText) {
-                    // Membersihkan format markdown yang terkadang dihasilkan AI (e.g., ```json ... ```)
-                    let cleanText = resText.replace(/```json/g, '').replace(/```/g, '').trim();
-                    
+                if (data && data.success) {
+                    let cleanText = data.data.replace(/```json/g, '').replace(/```/g, '').trim();
                     state.result = {
                         ...JSON.parse(cleanText),
                         mode: state.mode,
@@ -802,10 +416,10 @@
                         level_kognitif_dipilih: taksonomiTerpilih
                     };
                 } else {
-                    throw new Error("Respon AI kosong.");
+                    throw new Error(data && data.error ? data.error : "Respon AI kosong.");
                 }
             } catch (err) {
-                state.error = "Gagal meracik soal. Mungkin server sedang sibuk atau ada kendala koneksi. Silakan coba lagi.";
+                state.error = "Gagal meracik soal. Pastikan URL Apps Script sudah benar atau server mungkin sedang sibuk. Silakan coba lagi.";
             } finally {
                 state.loading = false;
                 render();
@@ -1022,10 +636,8 @@
 
         function renderResult() {
             const res = state.result;
-            // Menjamin indikator teks tampil dari properti apapun yang dikembalikan AI
             const indikatorText = res.indikator_soal_otomatis || res.indikator_soal || res.indikator || "Indikator tidak disertakan oleh AI.";
             
-            // Logika untuk menampilkan LOTS/HOTS label
             let levelLabel = "";
             let levelColor = "";
             const t = res.level_kognitif_dipilih || "";
@@ -1037,7 +649,6 @@
                 levelColor = "text-emerald-800 bg-emerald-100 border-emerald-300";
             }
 
-            // Render opsi jawaban secara kondisional berdasarkan jenis soal
             let opsiHtml = "";
             if (res.jenis_soal_terpilih === 'Benar Salah beserta alasan' && res.opsi_jawaban?.length > 0) {
                 opsiHtml = `
